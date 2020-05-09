@@ -188,7 +188,7 @@ html,body{
 		@keyframes star-fall{
 			0%{
 				opacity: 0;
-				transform: scale(0.5) translate3d(0,0);
+				transform: scale(0.5) translate3d(0,0,0);
 
 			}
 			50%{
