@@ -13,7 +13,9 @@
     "core-js": "^2.6.5",
     "element-ui": "^2.4.5",
     "js-md5": "^0.7.3",
+    "stylus-loader": "^3.0.2",
     "vue": "^2.6.10",
+    "vue-cropper": "^0.5.2",
     "vue-router": "^3.0.3",
     "vue2-editor": "^2.6.6"
   },

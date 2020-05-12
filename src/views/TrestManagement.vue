@@ -155,6 +155,9 @@
         :visible.sync="dialogFormVisible"
         :close-on-click-modal="false"
       >
+        <el-dialog width="60%" title="封面上传" :visible.sync="innerVisible" append-to-body>
+          <Cropper @upload="getUploadUrl" :uploadType="uploadType"></Cropper>
+        </el-dialog>
         <el-form :model="form" :rules="rules" :inline="true" ref="ruleForm" class="demo-ruleForm">
           <el-form-item prop="category_id" class="inputPosi">
             <el-select v-model="form.category_id" placeholder="综合分类">
@@ -179,6 +182,37 @@
           <div>标题</div>
           <el-form-item prop="name" class="inputwidth100" style="width:100%">
             <el-input v-model="form.name" placeholder="请输入标题"></el-input>
+          </el-form-item>
+          <el-form-item label="封面" prop="image_list" style="width:100%">
+            <div>
+              <el-button
+                type="primary"
+                v-if="!form.image_list[0].url"
+                plain
+                @click="innerVisible = true;uploadType = 1"
+              >封面大图</el-button>
+              <el-button
+                type="primary"
+                v-if="!form.image_list[1].url"
+                plain
+                @click="innerVisible = true;uploadType = 2"
+              >封面小图</el-button>
+            </div>
+
+            <img
+              :src="form.image_list[0].url"
+              alt
+              class="image43"
+              @click="innerVisible = true;uploadType = 1"
+              v-if="form.image_list[0].url"
+            />
+            <img
+              :src="form.image_list[1].url"
+              alt
+              class="image11"
+              @click="innerVisible = true;uploadType = 2"
+              v-if="form.image_list[1].url"
+            />
           </el-form-item>
           <el-form-item prop="content" style="width:100%" class="editor-el-form-item__content">
             <vue-editor
@@ -310,12 +344,15 @@
 
 <script>
 import { VueEditor } from "vue2-editor";
+import Cropper from "@/components/Cropper.vue";
 export default {
   components: {
-    VueEditor
+    VueEditor,
+    Cropper
   },
   data() {
     return {
+      uploadType: "",
       customToolbar: [
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
         ["blockquote"],
@@ -346,9 +383,11 @@ export default {
         }
       ],
       // 测试题
+      innerVisible: false,
       dialogFormVisible: false,
       form: {
         name: "",
+        image_list: [{ url: "" }, { url: "" }],
         content: "",
         is_vip_free: "1",
         result_type: "",
@@ -372,6 +411,9 @@ export default {
         ]
       },
       rules: {
+        image_list: [
+          { required: true, message: "请上传封面", trigger: "change" }
+        ],
         name: [{ required: true, message: "请输入标题", trigger: "blur" }],
         content: [{ required: true, message: "请输入内容", trigger: "blur" }],
         category_id: [
@@ -402,11 +444,22 @@ export default {
   },
   filters: {},
   methods: {
+    // 图片上传成功地址
+    getUploadUrl(data) {
+      console.log(data, this.form.image_list);
+      if (this.uploadType == 1) {
+        this.form.image_list[0].url = data;
+      } else {
+        this.form.image_list[1].url = data;
+      }
+      this.innerVisible = false;
+    },
     //   添加测试题
     addTest() {
       this.form = {
         name: "",
         content: "",
+        image_list: [{ url: "" }, { url: "" }],
         is_vip_free: "1",
         result_type: "",
         origin_price: "",
@@ -432,13 +485,13 @@ export default {
       this.dialogFormVisible = true;
     },
     //   获取测试题详情
-    async getQuestion(row,type) {
+    async getQuestion(row, type) {
       const res = await this.$http.get(`test/question/${row.id}`);
       if (res.code == 200) {
         res.data.is_vip_free = String(res.data.is_vip_free);
         this.form = res.data;
         this.dialogFormVisible = true;
-        this.form.id = type?this.form.id:"";
+        this.form.id = type ? this.form.id : "";
         console.log(this.form);
       }
     },
@@ -455,7 +508,13 @@ export default {
     },
     //   添加结果
     addResultList() {
-      this.form.result_list.push({ name: "", content: "", start_score: 0, end_score: 0, sort: 0 });
+      this.form.result_list.push({
+        name: "",
+        content: "",
+        start_score: 0,
+        end_score: 0,
+        sort: 0
+      });
     },
     //   删除题目
     deleteItemList(index) {
@@ -514,7 +573,7 @@ export default {
       let flag = true;
       for (let index = 0; index < this.form.item_list.length; index++) {
         const element = this.form.item_list[index];
-        console.log(element)
+        console.log(element);
         if (element.name == "") {
           flag = false;
           this.$message({
@@ -525,7 +584,7 @@ export default {
         }
         for (let j = 0; j < element.option_list.length; j++) {
           const element1 = element.option_list[j];
-          console.log(element1)
+          console.log(element1);
           if (element1.name == "" || element1.score == "") {
             this.$message({
               type: "error",
@@ -538,7 +597,7 @@ export default {
       }
       for (let i = 0; i < this.form.result_list.length; i++) {
         const element = this.form.result_list[i];
-        console.log(element)
+        console.log(element);
         if (
           element.content == "" ||
           element.start_score == "" ||
@@ -728,6 +787,21 @@ export default {
 }
 .width750 .el-dialog {
   width: 750px;
+}
+.image43 {
+  display: inline-block;
+  width: 256px;
+  height: 192px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+.image11 {
+  display: inline-block;
+  width: 180px;
+  height: 180px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-left: 20px
 }
 </style>
 
