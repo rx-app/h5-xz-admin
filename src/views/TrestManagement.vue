@@ -626,7 +626,7 @@ export default {
                   type: "success",
                   message: "操作成功"
                 });
-                thi.fetch();
+                this.fetch();
               }
             });
         } else {
