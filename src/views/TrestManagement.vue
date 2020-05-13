@@ -387,7 +387,10 @@ export default {
       dialogFormVisible: false,
       form: {
         name: "",
-        image_list: [{ url: "" }, { url: "" }],
+        image_list: [
+          { url: "", type: 0 },
+          { url: "", type: 1 }
+        ],
         content: "",
         is_vip_free: "1",
         result_type: "",
@@ -612,6 +615,19 @@ export default {
           return false;
         }
       }
+      for (let i = 0; i < this.form.image_list.length; i++) {
+        const element = this.form.image_list[i];
+        if (element.url == "") {
+          this.$message({
+            type: "error",
+            message: "请补全信息后再提交！"
+          });
+          flag = false;
+          return false;
+        }
+      }
+      // 
+      if(!flag) return false;
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$http
@@ -801,7 +817,7 @@ export default {
   height: 180px;
   padding: 10px;
   border: 1px solid #ccc;
-  margin-left: 20px
+  margin-left: 20px;
 }
 </style>
 
