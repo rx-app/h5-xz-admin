@@ -16,7 +16,7 @@
             <!-- <template slot="title">管理员</template> -->
             <el-menu-item index="/admin_users/create">新建管理员</el-menu-item>
             <el-menu-item index="/admin_users/list">管理员列表</el-menu-item>
-            <el-menu-item index="/setting/Advertising">广告位设置</el-menu-item>
+            <!-- <el-menu-item index="/setting/Advertising">广告位设置</el-menu-item> -->
           </el-menu-item-group>
         </el-submenu>
         <el-submenu index="2">

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <el-date-picker
+      <!-- <el-date-picker
         v-model="dateTime"
         value-format="timestamp"
         type="daterange"
@@ -9,7 +9,7 @@
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-      ></el-date-picker>
+      ></el-date-picker> -->
       <el-button
         style="margin-left:10px"
         type="primary"
@@ -19,11 +19,11 @@
         <i class="el-icon-refresh"></i> 查询
       </el-button>
       <el-button type="primary" class="add myBtn" @click="dialogFormVisible = true;">
-        <i class="el-icon-circle-plus"></i> 添加平台
+        <i class="el-icon-circle-plus"></i> 添加广告图
       </el-button>
     </div>
     <div class="card">
-      <h1 class="card-header">平台列表</h1>
+      <h1 class="card-header">广告位列表</h1>
       <el-table
         :data="items"
         stripe
@@ -69,33 +69,52 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :page-size="pageSize"
+        @next-click="nextClick"
+        @prev-click="prevClick"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :total="total"
+      ></el-pagination>
 
       <!-- 广告位设置 -->
-      <el-dialog title="广告位设置" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+      <el-dialog title="广告位设置" width="40%" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-form
           :model="ruleForm"
           :rules="rules"
           ref="ruleForm"
-          label-width="100px"
+          label-width="70px"
           class="demo-ruleForm"
         >
           <el-form-item label="标题" prop="name">
             <el-input v-model="ruleForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="网址" prop="href">
+          <!-- <el-form-item label="网址" prop="href">
             <el-input v-model="ruleForm.href"></el-input>
-          </el-form-item>
-          <el-form-item label="位置" prop="position">
+          </el-form-item> -->
+          <!-- <el-form-item label="位置" prop="position">
             <el-input v-model="ruleForm.position"></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="提示" prop="alt">
             <el-input v-model="ruleForm.alt"></el-input>
           </el-form-item>
           <el-form-item label="描述" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
+              <el-input type="textarea" v-model="ruleForm.remark"></el-input> 
           </el-form-item>
           <el-form-item label="图片" prop="src">
-            <el-input v-model="ruleForm.src"></el-input>
+            <el-upload
+              class="avatar-uploader"
+              :action="uploadUrl"
+              :headers="getAuthHeaders()"
+              :show-file-list="false"
+              :on-success="afterUpload"
+            >
+              <img v-if="ruleForm.src" :src="ruleForm.src" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
@@ -125,7 +144,9 @@ export default {
         src: ""
       },
       rules: {
-        name: [{ required: true, message: "请输入平台名称", trigger: "blur" }]
+        name: [{ required: true, message: "请输入平台名称", trigger: "blur" }],
+        src: [{ required: true, message: "请上传图片", trigger: "change" }],
+        // href: [{ required: true, message: "请输入网址", trigger: "blur" }]
       },
       dialogFormVisible: false,
 
@@ -140,6 +161,9 @@ export default {
   },
   filters: {},
   methods: {
+    afterUpload(res) {
+      this.$set(this.ruleForm, "src", res.data.url);
+    },
     changeDate(val) {
       this.start_time = val ? val[0] : "";
       this.end_time = val ? val[1] : "";
@@ -167,7 +191,7 @@ export default {
         if (valid) {
           this.$http
             .post(
-              `/content/platform/${!this.ruleForm.id ? "create" : "update"}`,
+              `/advert/${!this.ruleForm.id ? "create" : "update"}`,
               this.ruleForm
             )
             .then(res => {
@@ -190,18 +214,18 @@ export default {
       this.$refs[formName].resetFields();
     },
     async fetch() {
-      const res = await this.$http.get("/content/platform/list", {
+      const res = await this.$http.get("/advert/page", {
         params: {
           page_index: this.pageIndex,
           page_size: this.pageSize,
-          start_time: this.start_time,
-          end_time: this.end_time
+        //   start_time: this.start_time,
+        //   end_time: this.end_time
         }
       });
       console.log(res.data);
       if (res.code == 200) {
-        this.items = res.data;
-        // this.total = res.data.total_count;
+        this.items = res.data.result;
+        this.total = res.data.result.total_count;
       }
     },
     remove(row) {
@@ -226,7 +250,22 @@ export default {
           });
         }
       });
-    }
+    },
+    nextClick(val) {
+      this.pageIndex += 1;
+      this.fetch();
+    },
+    prevClick(val) {
+      this.pageIndex -= 1;
+      this.fetch();
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+      this.fetch();
+    },
   },
   created() {
     this.fetch();
