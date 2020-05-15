@@ -82,9 +82,9 @@ export default {
         autoCrop: true, // 是否默认生成截图框
         autoCropWidth: 180,
         autoCropHeight: 180,
-        fixed: true,
-        fixedNumber: [1, 1]
-        // fixedBox: true // 截图框固定大小
+        // fixed: true,
+        // fixedNumber: [1, 1],
+        fixedBox: true // 截图框固定大小
       },
       fileName: "", // 本机文件地址
       downImg: "#",
