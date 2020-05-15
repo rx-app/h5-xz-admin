@@ -26,7 +26,7 @@
             <input type="button" class="operation-btn" value="↺" title="左旋转" @click="rotateLeft" />
             <input type="button" class="operation-btn" value="↻" title="右旋转" @click="rotateRight" />
             <input type="button" class="operation-btn" value="↓" title="下载" @click="down('blob')" />
-            <div class="btn" @click="finish('blob')">上传头像</div>
+            <div class="btn" @click="finish('blob')">上传</div>
           </div>
           <div class="operation-box">
             <div class="cropper">
@@ -80,8 +80,10 @@ export default {
         original: false, // 上传图片是否显示原始宽高
         canMoveBox: true, // 能否拖动截图框
         autoCrop: true, // 是否默认生成截图框
-        autoCropWidth: 160,
-        autoCropHeight: 160
+        autoCropWidth: 180,
+        autoCropHeight: 180,
+        fixed: true,
+        fixedNumber: [1, 1]
         // fixedBox: true // 截图框固定大小
       },
       fileName: "", // 本机文件地址
@@ -93,24 +95,28 @@ export default {
   props: ["uploadType"],
   watch: {
     uploadType() {
-      this.option.img = ""
+      this.option.img = "";
       if (this.uploadType == 1) {
         this.option.autoCropWidth = 256;
         this.option.autoCropHeight = 192;
+        this.option.fixedNumber = [4, 3];
       } else {
         this.option.autoCropWidth = 180;
         this.option.autoCropHeight = 180;
+        this.option.fixedNumber = [1, 1];
       }
     }
   },
   mounted() {
-    this.option.img = ""
+    this.option.img = "";
     if (this.uploadType == 1) {
       this.option.autoCropWidth = 256;
-        this.option.autoCropHeight = 192;
+      this.option.autoCropHeight = 192;
+      this.option.fixedNumber = [4, 3];
     } else {
       this.option.autoCropWidth = 180;
       this.option.autoCropHeight = 180;
+      this.option.fixedNumber = [1, 1];
     }
   },
   methods: {

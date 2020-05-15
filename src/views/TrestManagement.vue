@@ -169,7 +169,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="result_type" class="inputPosi" style="left:330px">
+          <el-form-item prop="result_type" class="inputPosi" style="left:350px">
             <el-select v-model="form.result_type" placeholder="结果分类">
               <el-option
                 :label="item.name"
@@ -227,13 +227,14 @@
               <div
                 style="border:1px solid #DCDFE6;margin:10px 0px;padding:10px 5px;border-radius: 4px;"
               >
-                题目{{i+1}}
+                <span style="font-weight: bold;">测试题{{i+1}}</span>
+
                 <el-tooltip effect="light" content="删除" placement="bottom">
                   <el-button
                     size="mini"
                     type="danger"
                     plain
-                    style="float:right"
+                    style="float:right;margin-top: -4px;"
                     icon="el-icon-remove-outline"
                     @click="deleteItemList(i)"
                   ></el-button>
@@ -392,7 +393,7 @@ export default {
           { url: "", type: 1 }
         ],
         content: "",
-        is_vip_free: "1",
+        is_vip_free: "0",
         result_type: "",
         origin_price: "",
         present_price: "",
@@ -466,7 +467,7 @@ export default {
           { url: "", type: 0 },
           { url: "", type: 1 }
         ],
-        is_vip_free: "1",
+        is_vip_free: "0",
         result_type: "",
         origin_price: "",
         present_price: "",

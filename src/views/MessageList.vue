@@ -6,10 +6,10 @@
     <div class="card">
       <h1 class="card-header">留言列表</h1>
       <el-radio-group style="margin:25px" @change="fetch" v-model="status">
-            <el-radio :label="1">已通过</el-radio>
-            <el-radio :label="2">未通过</el-radio>
-            <el-radio :label="0">待审核</el-radio>
-        </el-radio-group>
+        <el-radio :label="1">已通过</el-radio>
+        <el-radio :label="2">未通过</el-radio>
+        <el-radio :label="0">待审核</el-radio>
+      </el-radio-group>
       <el-table :data="items" stripe border :header-cell-style="{background:'#eee'}">
         <el-table-column prop="id" label="ID" width="240"></el-table-column>
         <el-table-column prop="member_name" label="会员名"></el-table-column>
@@ -23,30 +23,37 @@
             <span v-else style="color:red">未通过</span>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="180">
+        <el-table-column fixed="right" label="操作" width="150">
           <template slot-scope="scope">
-            <el-button size="mini" @click="$router.push(`/message/edit/${scope.row.id}`)">审核</el-button>
+            <el-button
+              size="mini"
+              v-if="status == 0"
+              @click="dialogFormVisible = true;model = scope.row;model.status = 1"
+            >审核</el-button>
             <el-button size="mini" type="danger" @click="remove(scope.row)">删除</el-button>
-            <!-- <el-button
-              type="text"
-              size="small"
-              @click="$router.push(`/admin_users/edit/${scope.row.id}`)"
-            ><i class="el-icon-edit" title="编辑"></i></el-button>
-            <el-button type="text" size="small" @click="remove(scope.row)"><i class="el-icon-delete" title="删除"></i></el-button>-->
           </template>
         </el-table-column>
       </el-table>
-
-      <!-- <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[3, 6, 9, 12]"
-          :page-size="3"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
-      </el-pagination>-->
-
+      <!-- 审核 -->
+      <el-dialog title="审核留言" :visible.sync="dialogFormVisible">
+        <el-form style="max-width:600px" label-width="120px" @submit.native.prevent="save">
+          <el-form-item label="会员名">
+            <el-input readonly="true" v-model="model.member_name"></el-input>
+          </el-form-item>
+          <el-form-item label="内容">
+            <el-input type="text" readonly="true" v-model="model.content"></el-input>
+          </el-form-item>
+          <el-form-item label="内容">
+            <el-radio-group v-model="model.status">
+              <el-radio :label="1">通过</el-radio>
+              <el-radio :label="2">未通过</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item style="text-align:right">
+            <el-button type="primary" native-type="submit" class="myBtn" style="width: 100%;">确 定</el-button>
+          </el-form-item>
+        </el-form> 
+      </el-dialog>
       <el-pagination
         background
         layout="prev, pager, next"
@@ -65,11 +72,13 @@
 export default {
   data() {
     return {
-      status:0,
+      status: 0,
       items: [],
       pageSize: 8,
       total: 0,
-      pageIndex: 1
+      pageIndex: 1,
+      model:{},
+      dialogFormVisible:false
     };
   },
   filters: {},
@@ -97,7 +106,7 @@ export default {
         params: {
           page_index: this.pageIndex,
           page_size: this.pageSize,
-          // status: this.status,
+          status: this.status
         }
       });
       console.log(res.data);
@@ -107,7 +116,7 @@ export default {
       }
     },
     remove(row) {
-      this.$confirm(`确定要删除留言："${row.username}" 吗？`, "提示", {
+      this.$confirm(`确定要删除该留言吗？`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
@@ -126,7 +135,28 @@ export default {
           });
         }
       });
-    }
+    },
+    async save(){
+      let res
+      if (this.model.id) {  
+        res = await this.$http.post(`message/approve/${this.model.id}/${this.model.status}`, {id:this.model.id,status:this.model.status})
+      } else {
+        res = await this.$http.post('message/create', this.model)  //这个页面应该没有
+      }
+      if(res.code==200){ 
+        this.$message({
+          type: 'success',
+          message: '提交成功'
+        })
+        this.dialogFormVisible = false
+        this.fetch()
+      }else{
+        this.$message({
+          type: 'error',
+          message: `错误：${res.msg}`
+        })
+      }
+    },
   },
   created() {
     this.fetch();
