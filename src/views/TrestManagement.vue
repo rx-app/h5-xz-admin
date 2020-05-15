@@ -462,7 +462,10 @@ export default {
       this.form = {
         name: "",
         content: "",
-        image_list: [{ url: "" }, { url: "" }],
+        image_list: [
+          { url: "", type: 0 },
+          { url: "", type: 1 }
+        ],
         is_vip_free: "1",
         result_type: "",
         origin_price: "",
@@ -626,8 +629,8 @@ export default {
           return false;
         }
       }
-      // 
-      if(!flag) return false;
+      //
+      if (!flag) return false;
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$http

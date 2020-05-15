@@ -16,6 +16,7 @@ import TrestManagement from './views/TrestManagement.vue'
 
 import AccessFrom from './views/AccessFrom.vue' 
 
+import Advertising from './views/Advertising.vue' 
 
 Vue.use(Router)
 
@@ -41,6 +42,7 @@ const router = new Router({
  
         { path: '/test/trestManagement', component: TrestManagement },
         { path: '/statistical/AccessFrom', component: AccessFrom },
+        { path: '/setting/Advertising', component: Advertising },
         
       ]
     },
