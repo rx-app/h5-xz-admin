@@ -90,21 +90,23 @@ export default {
       const res = await this.$http.post("auth/login", {
         username: this.username,
         password: pwd
-      });
-      // sessionStorage.token = res.data.token
-
+      }); 
       if (res.code == 200) {
-        this.$message({
-          type: "success",
-          message: "登录成功"
-        });
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("name", this.username);
-
-        const res1 = this.$http.get("auth/info"); 
+        localStorage.setItem("name", this.username); 
+        const res1 = await this.$http.get("auth/info");
         if (res1.code == 200) {
+          localStorage.setItem("meunBtn", res1.data.role_set[0]);
+          this.$message({
+            type: "success",
+            message: "登录成功"
+          });
+          if (res1.data.role_set[0] == 1) {
+            this.$router.push("/admin_users/create");
+          } else {
+            this.$router.push("/card/create");
+          }
         }
-        this.$router.push("/admin_users/create");
       } else {
         this.$message({
           type: "error",

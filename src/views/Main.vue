@@ -2,7 +2,7 @@
   <el-container style="height: 100vh;">
     <el-aside width="200px">
       <el-menu router unique-opened :default-active="$route.path">
-        <el-submenu index="1">
+        <el-submenu index="1" v-if="meunBtn == 1">
           <template slot="title">
             <i class="el-icon-unlock"></i>
             <span>系统设置</span>
@@ -113,7 +113,8 @@ export default {
     }
   },
   created() {
-    
+    console.log(localStorage.getItem("meunBtn"))
+    this.meunBtn = localStorage.getItem("meunBtn")
     if (this.$route.path == "/") {
       this.$router.push("/admin_users/create"); 
     }
