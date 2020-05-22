@@ -16,7 +16,7 @@
           </template>
         </el-table-column>
         <!-- <el-table-column prop="email" label="邮箱"></el-table-column> -->
-        <el-table-column fixed="right" label="操作" width="180">
+        <el-table-column fixed="right"  label="操作" align="center" width="180">
           <template slot-scope="scope">
             <el-tooltip effect="light" content="编辑" placement="bottom">
               <el-button
@@ -100,7 +100,7 @@ export default {
       }
     },
     remove(row) {
-      this.$confirm(`确定要删除卡牌："${row.username}" 吗？`, "提示", {
+      this.$confirm(`确定要删除此卡牌吗？`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

@@ -46,7 +46,7 @@
             >复制</el-button>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="130">
+        <el-table-column fixed="right"  label="操作" align="center" width="130">
           <template slot-scope="scope">
             <el-tooltip effect="light" content="编辑" placement="bottom">
               <el-button

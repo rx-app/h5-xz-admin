@@ -12,7 +12,7 @@
         <el-table-column prop="username" label="用户名"></el-table-column>
         <el-table-column prop="mobile" label="手机号"></el-table-column>
         <el-table-column prop="email" label="邮箱"></el-table-column>
-        <el-table-column fixed="right" label="操作" width="180">
+        <el-table-column fixed="right"  label="操作" align="center" width="180">
           <template slot-scope="scope">
             <el-tooltip effect="light" content="编辑" placement="bottom">
               <el-button

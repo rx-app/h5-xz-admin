@@ -23,7 +23,7 @@
             <span v-else style="color:red">未通过</span>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="150">
+        <el-table-column fixed="right"  label="操作" align="center" width="150">
           <template slot-scope="scope">
             <el-button
               size="mini"

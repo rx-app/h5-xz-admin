@@ -9,7 +9,7 @@
           <img :src="scope.row.icon" style="height:3rem;" />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="180">
+      <el-table-column fixed="right"  label="操作" align="center" width="180">
         <template slot-scope="scope">
           <el-tooltip effect="light" content="编辑" placement="bottom">
             <el-button

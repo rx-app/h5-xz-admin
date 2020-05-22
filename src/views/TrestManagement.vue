@@ -28,7 +28,7 @@
         <el-table-column prop="origin_price" label="原价"></el-table-column>
         <el-table-column prop="present_price" label="现价"></el-table-column>
         <!-- <el-table-column prop="create_at" label="创建日期"></el-table-column> -->
-        <el-table-column fixed="right" label="操作" width="190">
+        <el-table-column fixed="right"  label="操作" align="center" width="190">
           <template slot-scope="scope">
             <!-- <el-tooltip effect="light" content="查看" placement="bottom">
               <el-button size="mini" type="primary" plain icon="el-icon-view"></el-button>
@@ -91,7 +91,7 @@
               <el-input v-if="!scope.row.checked" v-model="scope.row.remark"></el-input>
             </template>
           </el-table-column>
-          <el-table-column fixed="right" label="操作" width="150">
+          <el-table-column fixed="right"  label="操作" align="center" width="150">
             <template slot-scope="scope">
               <el-tooltip effect="light" content="编辑" v-if="scope.row.checked" placement="bottom">
                 <el-button

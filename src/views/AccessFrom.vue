@@ -32,8 +32,8 @@
         style="margin-bottom:20px"
       >
         <el-table-column type="index"></el-table-column>
-        <el-table-column prop="name" label="平台名称"></el-table-column>
-        <el-table-column prop="amount" label="总金额"></el-table-column>
+        <el-table-column prop="name" label="平台名称" width="150"></el-table-column>
+        <el-table-column prop="amount" label="总金额" width="150"></el-table-column>
         <el-table-column prop="url" label="地址">
           <template slot-scope="scope">
             <span>{{scope.row.url}}</span>
@@ -46,7 +46,7 @@
             >复制</el-button>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="130">
+        <el-table-column fixed="right"  label="操作" align="center" width="170" >
           <template slot-scope="scope">
             <el-tooltip effect="light" content="编辑" placement="bottom">
               <el-button
