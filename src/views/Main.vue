@@ -68,7 +68,7 @@
             <el-dropdown-item>删除</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown-->
-        <span>当前用户 [{{name}}}]</span>
+        <span>当前用户 [{{name}}]</span>
         <span @click="logout">
           <i class="el-icon-switch-button"></i> 注销
         </span>
@@ -126,12 +126,13 @@ export default {
         type: "warning"
       }).then(async () => {
         localStorage.removeItem("token");
-        this.$alert("身份信息无效或已过期，请重新登录", {
-          confirmButtonText: "确定",
-          callback: action => {
-            this.$router.push("/login");
-          }
-        });
+        this.$router.push("/login");
+        // this.$alert("身份信息无效或已过期，请重新登录", {
+        //   confirmButtonText: "确定",
+        //   callback: action => {
+        //     this.$router.push("/login");
+        //   }
+        // });
       });
 
       // router.push('/login');
