@@ -45,8 +45,12 @@ export default {
     };
     var RegEmail = (rule, value, callback) => {
       let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/;
-      if (!reg.test(value)) {
-        callback(new Error("请输入正确的邮箱"));
+      if (value) {
+        if (!reg.test(value)) {
+          callback(new Error("请输入正确的邮箱"));
+        } else {
+          callback();
+        }
       } else {
         callback();
       }

@@ -4,7 +4,7 @@
       <el-menu router unique-opened :default-active="$route.path">
         <el-submenu index="1">
           <template slot="title">
-            <i class="el-icon-message"></i>
+            <i class="el-icon-unlock"></i>
             <span>系统设置</span>
           </template>
           <!-- <el-menu-item-group>
@@ -21,7 +21,7 @@
         </el-submenu>
         <el-submenu index="2">
           <template slot="title">
-            <i class="el-icon-message"></i>
+            <i class="el-icon-thumb"></i>
             <span>每日运势</span>
           </template>
           <el-menu-item-group>
@@ -37,7 +37,7 @@
         </el-submenu>
         <el-submenu index="3">
           <template slot="title">
-            <i class="el-icon-message"></i>
+            <i class="el-icon-coordinate"></i>
             <span>测试大厅</span>
           </template>
           <el-menu-item-group>
@@ -48,7 +48,7 @@
 
         <el-submenu index="4">
           <template slot="title">
-            <i class="el-icon-message"></i>
+            <i class="el-icon-pie-chart"></i>
             <span>数据统计</span>
           </template>
           <el-menu-item-group>

@@ -1,165 +1,182 @@
 <template>
   <div>
-    <div>
-      <el-button type="primary" class="add myBtn" @click="pageIndex = 1;fetch()">
-        <i class="el-icon-refresh"></i> 列表刷新
-      </el-button>
-      <el-button
-        type="primary"
-        class="add myBtn"
-        @click="getCategoryList();dialogcategoryVisible = true;"
-      >
-        <i class="el-icon-circle-plus"></i> 分类管理
-      </el-button>
-      <el-button type="primary" class="add myBtn" @click="addTest">
-        <i class="el-icon-circle-plus"></i> 添加测试题
-      </el-button>
-    </div>
-    <div class="card">
-      <h1 class="card-header">测试题列表</h1>
-      <el-table :data="items" stripe border :header-cell-style="{background:'#eee'}">
-        <el-table-column type="index"></el-table-column>
-        <el-table-column prop="name" label="标题"></el-table-column>
-        <el-table-column prop="result_type" label="结果类型">
-          <template
-            slot-scope="scope"
-          >{{scope.row.result_type == 1?'得分':scope.row.result_type ==2?'百分比':'区间'}}</template>
-        </el-table-column>
-        <el-table-column prop="origin_price" label="原价"></el-table-column>
-        <el-table-column prop="present_price" label="现价"></el-table-column>
-        <!-- <el-table-column prop="create_at" label="创建日期"></el-table-column> -->
-        <el-table-column fixed="right"  label="操作" align="center" width="190">
-          <template slot-scope="scope">
-            <!-- <el-tooltip effect="light" content="查看" placement="bottom">
+    <div v-if="!dialogFormVisible">
+      <div>
+        <el-button type="primary" class="add myBtn" @click="pageIndex = 1;fetch()">
+          <i class="el-icon-refresh"></i> 列表刷新
+        </el-button>
+        <el-button
+          type="primary"
+          class="add myBtn"
+          @click="getCategoryList();dialogcategoryVisible = true;"
+        >
+          <i class="el-icon-circle-plus"></i> 分类管理
+        </el-button>
+        <el-button type="primary" class="add myBtn" @click="addTest">
+          <i class="el-icon-circle-plus"></i> 添加测试题
+        </el-button>
+      </div>
+      <div class="card">
+        <h1 class="card-header">测试题列表</h1>
+        <el-table :data="items" stripe border :header-cell-style="{background:'#eee'}">
+          <el-table-column type="index"></el-table-column>
+          <el-table-column prop="name" label="标题"></el-table-column>
+          <el-table-column prop="result_type" label="结果类型">
+            <template
+              slot-scope="scope"
+            >{{scope.row.result_type == 1?'得分':scope.row.result_type ==2?'百分比':'区间'}}</template>
+          </el-table-column>
+          <el-table-column prop="origin_price" label="原价"></el-table-column>
+          <el-table-column prop="present_price" label="现价"></el-table-column>
+          <!-- <el-table-column prop="create_at" label="创建日期"></el-table-column> -->
+          <el-table-column fixed="right" label="操作" align="center" width="190">
+            <template slot-scope="scope">
+              <!-- <el-tooltip effect="light" content="查看" placement="bottom">
               <el-button size="mini" type="primary" plain icon="el-icon-view"></el-button>
-            </el-tooltip>-->
+              </el-tooltip>-->
 
-            <el-tooltip effect="light" content="编辑" placement="bottom">
-              <el-button
-                size="mini"
-                type="primary"
-                plain
-                icon="el-icon-edit"
-                @click="getCategoryList();getQuestion(scope.row,true)"
-              ></el-button>
-            </el-tooltip>
-
-            <el-tooltip effect="light" content="删除" placement="bottom">
-              <el-button
-                size="mini"
-                type="danger"
-                plain
-                icon="el-icon-delete"
-                @click="remove(scope.row)"
-              ></el-button>
-            </el-tooltip>
-
-            <el-tooltip effect="light" content="复制" placement="bottom">
-              <el-button
-                size="mini"
-                type="primary"
-                @click="getCategoryList();getQuestion(scope.row,false)"
-                plain
-                icon="el-icon-news"
-              ></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="pageSize"
-        @next-click="nextClick"
-        @prev-click="prevClick"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :total="total"
-      ></el-pagination>
-      <!-- 分类管理 -->
-      <el-dialog title="分类管理" :visible.sync="dialogcategoryVisible" :close-on-click-modal="false">
-        <el-table :data="categoryData">
-          <el-table-column label="名称" property="name">
-            <template slot-scope="scope">
-              <span v-if="scope.row.checked">{{scope.row.name}}</span>
-              <el-input v-if="!scope.row.checked" v-model="scope.row.name"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="备注" property="remark">
-            <template slot-scope="scope">
-              <span v-if="scope.row.checked">{{scope.row.remark}}</span>
-              <el-input v-if="!scope.row.checked" v-model="scope.row.remark"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column fixed="right"  label="操作" align="center" width="150">
-            <template slot-scope="scope">
-              <el-tooltip effect="light" content="编辑" v-if="scope.row.checked" placement="bottom">
+              <el-tooltip effect="light" content="编辑" placement="bottom">
                 <el-button
                   size="mini"
                   type="primary"
                   plain
                   icon="el-icon-edit"
-                  @click="changeChecked(scope.$index)"
+                  @click="getCategoryList();getQuestion(scope.row,true)"
                 ></el-button>
               </el-tooltip>
-              <el-tooltip effect="light" content="保存" v-if="!scope.row.checked" placement="bottom">
-                <el-button
-                  size="mini"
-                  type="primary"
-                  plain
-                  icon="el-icon-check"
-                  @click="saveChecked(scope.row)"
-                ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                effect="light"
-                content="删除"
-                v-if="scope.row.id&&scope.row.checked"
-                placement="bottom"
-              >
+
+              <el-tooltip effect="light" content="删除" placement="bottom">
                 <el-button
                   size="mini"
                   type="danger"
                   plain
                   icon="el-icon-delete"
-                  @click="deletecategoryItem(scope.row)"
+                  @click="remove(scope.row)"
                 ></el-button>
               </el-tooltip>
-              <el-tooltip effect="light" content="移除" v-if="!scope.row.id" placement="bottom">
+
+              <el-tooltip effect="light" content="复制" placement="bottom">
                 <el-button
-                  type="danger"
-                  plain
                   size="mini"
-                  icon="el-icon-remove-outline"
-                  @click="removecategoryItem(scope.$index)"
+                  type="primary"
+                  @click="getCategoryList();getQuestion(scope.row,false)"
+                  plain
+                  icon="el-icon-news"
                 ></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
-        <div style="margin: 0 20px;">
-          <el-button
-            type="primary"
-            plain
-            style="border-top:0px;border-color:#EBEEF5;width:100%"
-            @click="addCategory"
-          >
-            <i class="el-icon-circle-plus-outline"></i> 分类管理
-          </el-button>
-        </div>
-      </el-dialog>
-      <!-- 测试题 -->
-      <el-dialog
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          @next-click="nextClick"
+          @prev-click="prevClick"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :total="total"
+        ></el-pagination>
+        <!-- 分类管理 -->
+        <el-dialog title="分类管理" :visible.sync="dialogcategoryVisible" :close-on-click-modal="false">
+          <el-table :data="categoryData">
+            <el-table-column label="名称" property="name">
+              <template slot-scope="scope">
+                <span v-if="scope.row.checked">{{scope.row.name}}</span>
+                <el-input v-if="!scope.row.checked" v-model="scope.row.name"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="备注" property="remark">
+              <template slot-scope="scope">
+                <span v-if="scope.row.checked">{{scope.row.remark}}</span>
+                <el-input v-if="!scope.row.checked" v-model="scope.row.remark"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" align="center" width="150">
+              <template slot-scope="scope">
+                <el-tooltip effect="light" content="编辑" v-if="scope.row.checked" placement="bottom">
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    plain
+                    icon="el-icon-edit"
+                    @click="changeChecked(scope.$index)"
+                  ></el-button>
+                </el-tooltip>
+                <el-tooltip
+                  effect="light"
+                  content="保存"
+                  v-if="!scope.row.checked"
+                  placement="bottom"
+                >
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    plain
+                    icon="el-icon-check"
+                    @click="saveChecked(scope.row)"
+                  ></el-button>
+                </el-tooltip>
+                <el-tooltip
+                  effect="light"
+                  content="删除"
+                  v-if="scope.row.id&&scope.row.checked"
+                  placement="bottom"
+                >
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    plain
+                    icon="el-icon-delete"
+                    @click="deletecategoryItem(scope.row)"
+                  ></el-button>
+                </el-tooltip>
+                <el-tooltip effect="light" content="移除" v-if="!scope.row.id" placement="bottom">
+                  <el-button
+                    type="danger"
+                    plain
+                    size="mini"
+                    icon="el-icon-remove-outline"
+                    @click="removecategoryItem(scope.$index)"
+                  ></el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div style="margin: 0 20px;">
+            <el-button
+              type="primary"
+              plain
+              style="border-top:0px;border-color:#EBEEF5;width:100%"
+              @click="addCategory"
+            >
+              <i class="el-icon-circle-plus-outline"></i> 分类管理
+            </el-button>
+          </div>
+        </el-dialog>
+        <!-- 测试题 -->
+        <!-- <el-dialog
         title="测试题配置"
-        class="width750"
+        class="width900"
         :visible.sync="dialogFormVisible"
         :close-on-click-modal="false"
-      >
+        >-->
+
+        <!-- </el-dialog> -->
+      </div>
+    </div>
+    <div v-if="dialogFormVisible">
+      <div class="about card">
+        <h1 class="card-header">{{this.form.id ? '编辑' : '新建'}}卡牌</h1>
+        <el-button
+          @click="dialogFormVisible = false"
+          style="position: absolute; right: 30px; top: 27px;"
+        >返 回</el-button>
         <el-dialog width="60%" title="封面上传" :visible.sync="innerVisible" append-to-body>
           <Cropper @upload="getUploadUrl" :uploadType="uploadType"></Cropper>
         </el-dialog>
-        <el-form :model="form" :rules="rules" :inline="true" ref="ruleForm" class="demo-ruleForm">
-          <el-form-item prop="category_id" class="inputPosi">
+        <el-form :model="form" :rules="rules" :inline="true" ref="ruleForm" style="padding:30px">
+          <el-form-item prop="category_id">
             <el-select v-model="form.category_id" placeholder="综合分类">
               <el-option
                 :label="item.name"
@@ -169,7 +186,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="result_type" class="inputPosi" style="left:350px">
+          <el-form-item prop="result_type" style="left:350px">
             <el-select v-model="form.result_type" placeholder="结果分类">
               <el-option
                 :label="item.name"
@@ -334,11 +351,10 @@
             </el-radio-group>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('ruleForm')">{{this.form.id?'修改':'立即创建'}}</el-button>
+        <div slot="footer" class="dialog-footer" style="text-align:center;padding:20px">
+          <el-button type="primary" @click="submitForm('ruleForm')">{{this.form.id?'修改':'确定'}}</el-button>
         </div>
-      </el-dialog>
+      </div>
     </div>
   </div>
 </template>
@@ -799,14 +815,15 @@ export default {
 }
 .editor-el-form-item__content .el-form-item__content {
   line-height: normal;
+  width: 100%;
 }
 .iconfont {
   font-size: 22px;
   vertical-align: middle;
   margin-left: 5px;
 }
-.width750 .el-dialog {
-  width: 750px;
+.width900 .el-dialog {
+  width: 1000px;
 }
 .image43 {
   display: inline-block;
