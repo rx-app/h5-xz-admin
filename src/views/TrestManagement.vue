@@ -558,6 +558,9 @@ export default {
       const res = await this.$http.get(`test/question/${row.id}`);
       if (res.code == 200) {
         res.data.is_vip_free = String(res.data.is_vip_free);
+        res.data.is_hot = String(res.data.is_hot);
+        res.data.is_recommend = String(res.data.is_recommend);
+        res.data.is_rotation = String(res.data.is_rotation);
         this.form = res.data;
         this.dialogFormVisible = true;
         this.form.id = type ? this.form.id : "";

@@ -198,10 +198,10 @@ body {
   border-color: transparent transparent transparent #eee;
 }
 /*创建动画，实现流星划过、渐入渐隐的效果*/
-/* @keyframes star-fall{
+@keyframes star-fall{
 			0%{
 				opacity: 0;
-				transform: scale(0.5) translate3d(0,0);
+				transform: scale(0.5) translate3d(0,0,0);
 
 			}
 			50%{
@@ -213,5 +213,5 @@ body {
 		        opacity: 0;
 		        transform: scale(1.2) translate3d(-300px, 300px, 0);
 		      }
-		} */
+		}
 </style>
