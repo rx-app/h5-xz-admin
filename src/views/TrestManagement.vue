@@ -254,7 +254,7 @@
               v-model="form.content"
               :editor-toolbar="customToolbar"
               useCustomImageHandler
-              @imageAdded="handleImageAdded"
+              @image-added="handleImageAdded"
             ></vue-editor>
           </el-form-item>
           <div style="border:1px solid #f0f0f0;padding:10px;margin-bottom:20px">
