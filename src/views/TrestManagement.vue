@@ -1,10 +1,7 @@
 <template>
   <div>
     <div v-if="!dialogFormVisible">
-      <div>
-        <el-button type="primary" class="add myBtn" @click="pageIndex = 1;fetch()">
-          <i class="el-icon-refresh"></i> 列表刷新
-        </el-button>
+      <div style="background:#fff;padding:20px 20px 0px 20px">
         <el-button
           type="primary"
           class="add myBtn"
@@ -12,23 +9,44 @@
         >
           <i class="el-icon-circle-plus"></i> 分类管理
         </el-button>
-        <el-button type="primary" class="add myBtn" @click="addTest">
+        <el-button type="primary" style="margin-right:10px" class="add myBtn" @click="addTest">
           <i class="el-icon-circle-plus"></i> 添加测试题
         </el-button>
+        <el-input
+          v-model="keyword"
+          placeholder="请输入标题..."
+          prefix-icon="el-icon-search"
+          @keyup.enter.native="pageIndex = 1;fetch()"
+          style="display:inline-block;width:220px;margin-right:10px"
+        ></el-input>
+        <el-select
+          v-model="category_id"
+          placeholder="综合分类"
+          @change="pageIndex = 1;fetch()"
+          style="display:inline-block;width:220px;margin-right:10px"
+        >
+          <el-option label="全部" value key></el-option>
+          <el-option
+            :label="item.name"
+            :value="item.id"
+            :key="item.id"
+            v-for="item in categoryData"
+          ></el-option>
+        </el-select>
+        <!-- <el-button type="primary" class="add myBtn" >
+          <i class="el-icon-refresh"></i> 查询
+        </el-button>-->
       </div>
       <div class="card">
-        <h1 class="card-header">测试题列表</h1>
+        <h1 style="padding:0px 20px">测试题列表</h1>
         <el-table :data="items" stripe border :header-cell-style="{background:'#eee'}">
           <el-table-column type="index"></el-table-column>
           <el-table-column prop="name" label="标题"></el-table-column>
-          <el-table-column prop="result_type" label="结果类型">
-            <template
-              slot-scope="scope"
-            >{{scope.row.result_type == 1?'得分':scope.row.result_type ==2?'百分比':'区间'}}</template>
+          <el-table-column prop="category_name" label="分类"></el-table-column>
+          <el-table-column prop="update_user_name" label="操作人"></el-table-column>
+          <el-table-column prop="update_at" label="时间">
+            <template slot-scope="scope">{{scope.row.create_at | dd}}</template>
           </el-table-column>
-          <el-table-column prop="origin_price" label="原价"></el-table-column>
-          <el-table-column prop="present_price" label="现价"></el-table-column>
-          <!-- <el-table-column prop="create_at" label="创建日期"></el-table-column> -->
           <el-table-column fixed="right" label="操作" align="center" width="190">
             <template slot-scope="scope">
               <!-- <el-tooltip effect="light" content="查看" placement="bottom">
@@ -350,6 +368,26 @@
               <el-radio label="1">付费</el-radio>
             </el-radio-group>
           </el-form-item>
+          <div>
+            <el-form-item label="是否热门" prop="is_hot" style="margin-right:50px">
+              <el-radio-group v-model="form.is_hot">
+                <el-radio label="0">不热门</el-radio>
+                <el-radio label="1">热门</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="是否推荐" prop="is_recommend" style="margin-right:50px">
+              <el-radio-group v-model="form.is_recommend">
+                <el-radio label="0">不推荐</el-radio>
+                <el-radio label="1">推荐</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="是否轮播" prop="is_rotation">
+              <el-radio-group v-model="form.is_rotation">
+                <el-radio label="0">不轮播</el-radio>
+                <el-radio label="1">轮播</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </div>
         </el-form>
         <div slot="footer" class="dialog-footer" style="text-align:center;padding:20px">
           <el-button type="primary" @click="submitForm('ruleForm')">{{this.form.id?'修改':'确定'}}</el-button>
@@ -369,7 +407,9 @@ export default {
   },
   data() {
     return {
+      keyword: "",
       uploadType: "",
+      category_id: "",
       customToolbar: [
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
         ["blockquote"],
@@ -410,6 +450,9 @@ export default {
         ],
         content: "",
         is_vip_free: "0",
+        is_hot: "0",
+        is_recommend: "0",
+        is_rotation: "0",
         result_type: "",
         origin_price: "",
         present_price: "",
@@ -484,6 +527,9 @@ export default {
           { url: "", type: 1 }
         ],
         is_vip_free: "0",
+        is_hot: "0",
+        is_recommend: "0",
+        is_rotation: "0",
         result_type: "",
         origin_price: "",
         present_price: "",
@@ -765,7 +811,9 @@ export default {
       const res = await this.$http.get("test/question/page", {
         params: {
           page_index: this.pageIndex,
-          page_size: this.pageSize
+          page_size: this.pageSize,
+          keyword: this.keyword,
+          category_id: this.category_id
           // status: this.status,
         }
       });
@@ -801,6 +849,7 @@ export default {
   },
   created() {
     this.fetch();
+    this.getCategoryList();
   }
 };
 </script>
