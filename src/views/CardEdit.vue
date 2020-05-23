@@ -38,7 +38,7 @@
           v-model="model.content"
           :editor-toolbar="customToolbar"
           useCustomImageHandler
-          @imageAdded="handleImageAdded"
+          @image-added="handleImageAdded"
         ></vue-editor>
       </el-form-item>
       <el-form-item style="text-align:right">
