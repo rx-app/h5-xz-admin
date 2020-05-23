@@ -99,7 +99,7 @@ export default {
       if (this.uploadType == 1) {
         this.option.autoCropWidth = 256;
         this.option.autoCropHeight = 192;
-        this.option.fixedNumber = [4, 3];
+        this.option.fixedNumber = [2, 1];
       } else {
         this.option.autoCropWidth = 180;
         this.option.autoCropHeight = 180;
