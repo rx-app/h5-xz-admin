@@ -282,7 +282,7 @@
                 <el-form-item :prop="item1.name" style="width:100%">
                   <el-input
                     v-model="item1.name"
-                    style="width:350px;margin-right:10px"
+                    style="width:550px;margin-right:10px"
                     placeholder="请输入选项内容"
                   ></el-input>
                   <!-- 排序
@@ -342,7 +342,7 @@
                 <el-input-number size="mini" v-model="item.sort" :min="1"></el-input-number>-->
               </el-form-item>
               <el-form-item :prop="item.content" class="inputwidth100" style="width:100%">
-                <el-input v-model="item.content" type="textarea" placeholder="请输入内容"></el-input>
+                <el-input :maxlength="200" :max="200" :rows="3" v-model="item.content" type="textarea" placeholder="请输入内容/最多输入200字"></el-input>
               </el-form-item>
             </div>
             <div>
