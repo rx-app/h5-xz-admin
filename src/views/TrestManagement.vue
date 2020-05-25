@@ -242,7 +242,7 @@
           <el-form-item label="封面" prop="image_list" style="width:100%">
             <div>
               <!-- 0：默认4-3  1.轮播2-1 2：推荐1-1 -->
-              <el-button
+              <!-- <el-button
                 type="primary"
                 v-if="!form.image_list[0].url"
                 plain
@@ -260,31 +260,37 @@
                 v-if="!form.image_list[1].url&&form.is_rotation == 1"
                 plain
                 @click="innerVisible = true;uploadType = 3"
-              >轮播图</el-button>
+              >轮播图</el-button>-->
             </div>
-
-            <img
-              :src="form.image_list[0].url"
-              alt
-              class="image43"
-              @click="innerVisible = true;uploadType = 1"
-              v-if="form.image_list[0].url"
-            />
-
-            <img
-              :src="form.image_list[2].url"
-              alt
-              class="image11"
-              @click="innerVisible = true;uploadType = 2"
-              v-if="form.image_list[2].url&& form.is_recommend ==1"
-            />
-            <img
-              :src="form.image_list[1].url"
-              alt
-              class="image21"
-              @click="innerVisible = true;uploadType = 3"
-              v-if="form.image_list[1].url&&form.is_rotation == 1"
-            />
+            <div class="imgbox">
+              <img
+                :src="form.image_list[0].url"
+                alt
+                class="image43"
+                @click="innerVisible = true;uploadType = 1"
+              />
+              <div class="imgtitle">请点击上传默认封面图 4:3</div>
+            </div>
+            <div class="imgbox">
+              <img
+                :src="form.image_list[2].url"
+                alt
+                class="image11"
+                @click="innerVisible = true;uploadType = 2"
+                v-if="form.is_recommend ==1"
+              />
+              <div v-if="form.is_recommend ==1" class="imgtitle">请点击上传推荐图 1:1</div>
+            </div>
+            <div class="imgbox">
+              <img
+                :src="form.image_list[1].url"
+                alt
+                class="image21"
+                @click="innerVisible = true;uploadType = 3"
+                v-if="form.is_rotation == 1"
+              />
+              <div v-if="form.is_rotation == 1" class="imgtitle">请点击上传轮播图 2:1</div>
+            </div>
           </el-form-item>
           <el-form-item prop="content" style="width:100%" class="editor-el-form-item__content">
             <vue-editor
@@ -401,10 +407,24 @@
             </div>
           </div>
           <el-form-item label="原价" prop="origin_price">
-            <el-input v-model="form.origin_price" style="width:120px" placeholder="请输入原价"></el-input>
+            <el-input-number
+              size="mini"
+              v-model="form.origin_price"
+              :precision="2"
+              :min="0"
+              placeholder="请输入原价"
+            ></el-input-number>元
+            <!-- <el-input v-model.number="form.origin_price" :min="0" style="width:120px" placeholder="请输入原价"></el-input> -->
           </el-form-item>
           <el-form-item label="现价" prop="present_price">
-            <el-input v-model="form.present_price" style="width:120px" placeholder="请输入现价"></el-input>
+            <el-input-number
+              size="mini"
+              v-model="form.present_price"
+              :precision="2"
+              :min="0"
+              placeholder="请输入现价"
+            ></el-input-number>元
+            <!-- <el-input v-model.number="form.present_price" :min="0" style="width:120px" placeholder="请输入现价"></el-input> -->
           </el-form-item>
           <el-form-item label="会员是否免费" prop="is_vip_free">
             <el-radio-group v-model="form.is_vip_free">
@@ -478,9 +498,9 @@ export default {
         is_hot: "0",
         is_recommend: "0",
         is_rotation: "0",
-        result_type: "",
-        origin_price: "",
-        present_price: "",
+        result_type: 1,
+        origin_price: 0,
+        present_price: 0,
         category_id: "",
         item_list: [
           {
@@ -558,10 +578,10 @@ export default {
         is_hot: "0",
         is_recommend: "0",
         is_rotation: "0",
-        result_type: "",
-        origin_price: "",
-        present_price: "",
-        category_id: "",
+        result_type: 1,
+        origin_price: 0,
+        present_price: 0,
+        category_id: this.categoryData[0].id,
         item_list: [
           {
             name: "",
@@ -588,8 +608,10 @@ export default {
         res.data.is_vip_free = String(res.data.is_vip_free);
         res.data.is_hot = String(res.data.is_hot);
         res.data.is_recommend = String(res.data.is_recommend);
-        res.data.is_rotation = String(res.data.is_rotation);
+        res.data.is_rotation = String(res.data.is_rotation); 
         this.form = res.data;
+        this.form.origin_price = res.data.origin_price / 100;
+        this.form.present_price = res.data.present_price / 100;
         this.dialogFormVisible = true;
         this.form.id = type ? this.form.id : "";
         console.log(this.form);
@@ -740,6 +762,8 @@ export default {
       if (!flag) return false;
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.form.origin_price = this.form.origin_price * 100;
+          this.form.present_price = this.form.present_price * 100;
           this.$http
             .post(
               `/test/question/${!this.form.id ? "create" : "update"}`,
@@ -774,6 +798,7 @@ export default {
           item.checked = true;
         });
         this.categoryData = res.data.result;
+        this.form.category_id = this.categoryData[0].id;
       }
     },
     // 修改分类
@@ -920,26 +945,39 @@ export default {
 }
 .image43 {
   display: inline-block;
-  width: 256px;
-  height: 192px;
+  width: 160px;
+  height: 120px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px dashed #409eff;
+  border-radius: 5px;
+  margin-left: 30px;
 }
 .image21 {
   display: inline-block;
   width: 240px;
   height: 120px;
   padding: 10px;
-  margin-left: 20px;
-  border: 1px solid #ccc;
+  margin-left: 30px;
+  border: 1px dashed #409eff;
+  border-radius: 5px;
 }
 .image11 {
   display: inline-block;
-  width: 180px;
-  height: 180px;
+  width: 120px;
+  height: 120px;
   padding: 10px;
-  border: 1px solid #ccc;
-  margin-left: 20px;
+  border: 1px dashed #409eff;
+  margin-left: 30px;
+  border-radius: 5px;
+}
+.imgbox {
+  display: inline-block;
+}
+.imgtitle {
+  color: #acacac;
+  font-size: 12px;
+  line-height: 28px;
+  margin-left: 30px;
 }
 </style>
 
