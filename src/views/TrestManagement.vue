@@ -218,20 +218,49 @@
           <el-form-item prop="name" class="inputwidth100" style="width:100%">
             <el-input v-model="form.name" placeholder="请输入标题"></el-input>
           </el-form-item>
+          <div>
+            <el-form-item label="是否热门" prop="is_hot" style="margin-right:50px">
+              <el-radio-group v-model="form.is_hot">
+                <el-radio label="0">不热门</el-radio>
+                <el-radio label="1">热门</el-radio>
+              </el-radio-group>
+            </el-form-item>
+
+            <el-form-item label="是否推荐" prop="is_recommend" style="margin-right:50px">
+              <el-radio-group v-model="form.is_recommend">
+                <el-radio label="0">不推荐</el-radio>
+                <el-radio label="1">推荐</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="是否轮播" prop="is_rotation">
+              <el-radio-group v-model="form.is_rotation">
+                <el-radio label="0">不轮播</el-radio>
+                <el-radio label="1">轮播</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </div>
           <el-form-item label="封面" prop="image_list" style="width:100%">
             <div>
+              <!-- 0：默认4-3  1.轮播2-1 2：推荐1-1 -->
               <el-button
                 type="primary"
                 v-if="!form.image_list[0].url"
                 plain
                 @click="innerVisible = true;uploadType = 1"
-              >封面大图</el-button>
+              >默认图</el-button>
+
               <el-button
                 type="primary"
-                v-if="!form.image_list[1].url"
+                v-if="!form.image_list[2].url&& form.is_recommend ==1"
                 plain
                 @click="innerVisible = true;uploadType = 2"
-              >封面小图</el-button>
+              >推荐图</el-button>
+              <el-button
+                type="primary"
+                v-if="!form.image_list[1].url&&form.is_rotation == 1"
+                plain
+                @click="innerVisible = true;uploadType = 3"
+              >轮播图</el-button>
             </div>
 
             <img
@@ -241,12 +270,20 @@
               @click="innerVisible = true;uploadType = 1"
               v-if="form.image_list[0].url"
             />
+
             <img
-              :src="form.image_list[1].url"
+              :src="form.image_list[2].url"
               alt
               class="image11"
               @click="innerVisible = true;uploadType = 2"
-              v-if="form.image_list[1].url"
+              v-if="form.image_list[2].url&& form.is_recommend ==1"
+            />
+            <img
+              :src="form.image_list[1].url"
+              alt
+              class="image21"
+              @click="innerVisible = true;uploadType = 3"
+              v-if="form.image_list[1].url&&form.is_rotation == 1"
             />
           </el-form-item>
           <el-form-item prop="content" style="width:100%" class="editor-el-form-item__content">
@@ -342,7 +379,14 @@
                 <el-input-number size="mini" v-model="item.sort" :min="1"></el-input-number>-->
               </el-form-item>
               <el-form-item :prop="item.content" class="inputwidth100" style="width:100%">
-                <el-input :maxlength="200" :max="200" :rows="3" v-model="item.content" type="textarea" placeholder="请输入内容/最多输入200字"></el-input>
+                <el-input
+                  :maxlength="200"
+                  :max="200"
+                  :rows="3"
+                  v-model="item.content"
+                  type="textarea"
+                  placeholder="请输入内容/最多输入200字"
+                ></el-input>
               </el-form-item>
             </div>
             <div>
@@ -368,26 +412,6 @@
               <el-radio label="1">付费</el-radio>
             </el-radio-group>
           </el-form-item>
-          <div>
-            <el-form-item label="是否热门" prop="is_hot" style="margin-right:50px">
-              <el-radio-group v-model="form.is_hot">
-                <el-radio label="0">不热门</el-radio>
-                <el-radio label="1">热门</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否推荐" prop="is_recommend" style="margin-right:50px">
-              <el-radio-group v-model="form.is_recommend">
-                <el-radio label="0">不推荐</el-radio>
-                <el-radio label="1">推荐</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否轮播" prop="is_rotation">
-              <el-radio-group v-model="form.is_rotation">
-                <el-radio label="0">不轮播</el-radio>
-                <el-radio label="1">轮播</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </div>
         </el-form>
         <div slot="footer" class="dialog-footer" style="text-align:center;padding:20px">
           <el-button type="primary" @click="submitForm('ruleForm')">{{this.form.id?'修改':'确定'}}</el-button>
@@ -446,7 +470,8 @@ export default {
         name: "",
         image_list: [
           { url: "", type: 0 },
-          { url: "", type: 1 }
+          { url: "", type: 1 },
+          { url: "", type: 2 }
         ],
         content: "",
         is_vip_free: "0",
@@ -512,7 +537,9 @@ export default {
       console.log(data, this.form.image_list);
       if (this.uploadType == 1) {
         this.form.image_list[0].url = data;
-      } else {
+      } else if (this.uploadType == 2) {
+        this.form.image_list[2].url = data;
+      } else if (this.uploadType == 3) {
         this.form.image_list[1].url = data;
       }
       this.innerVisible = false;
@@ -524,7 +551,8 @@ export default {
         content: "",
         image_list: [
           { url: "", type: 0 },
-          { url: "", type: 1 }
+          { url: "", type: 1 },
+          { url: "", type: 2 }
         ],
         is_vip_free: "0",
         is_hot: "0",
@@ -684,16 +712,29 @@ export default {
           return false;
         }
       }
-      for (let i = 0; i < this.form.image_list.length; i++) {
-        const element = this.form.image_list[i];
-        if (element.url == "") {
-          this.$message({
-            type: "error",
-            message: "请补全信息后再提交！"
-          });
-          flag = false;
-          return false;
-        }
+      if (this.form.image_list[0].url == "") {
+        this.$message({
+          type: "error",
+          message: "请上传封面图后再提交！"
+        });
+        flag = false;
+        return false;
+      }
+      if (this.form.is_recommend == 1 && this.form.image_list[2].url == "") {
+        this.$message({
+          type: "error",
+          message: "请上传推荐图后再提交！"
+        });
+        flag = false;
+        return false;
+      }
+      if (this.form.is_rotation == 1 && this.form.image_list[1].url == "") {
+        this.$message({
+          type: "error",
+          message: "请上传轮播图后再提交！"
+        });
+        flag = false;
+        return false;
       }
       //
       if (!flag) return false;
@@ -882,6 +923,14 @@ export default {
   width: 256px;
   height: 192px;
   padding: 10px;
+  border: 1px solid #ccc;
+}
+.image21 {
+  display: inline-block;
+  width: 240px;
+  height: 120px;
+  padding: 10px;
+  margin-left: 20px;
   border: 1px solid #ccc;
 }
 .image11 {

@@ -95,14 +95,19 @@ export default {
   props: ["uploadType"],
   watch: {
     uploadType() {
+      //<!-- 0：默认4-3  1.轮播2-1 2：推荐1-1 -->
       this.option.img = "";
       if (this.uploadType == 1) {
         this.option.autoCropWidth = 256;
         this.option.autoCropHeight = 192;
         this.option.fixedNumber = [4, 3];
-      } else {
+      } else if (this.uploadType == 2) {
         this.option.autoCropWidth = 180;
         this.option.autoCropHeight = 180;
+        this.option.fixedNumber = [1, 1];
+      } else if (this.uploadType == 3) {
+        this.option.autoCropWidth = 240;
+        this.option.autoCropHeight = 120;
         this.option.fixedNumber = [1, 1];
       }
     }
@@ -113,9 +118,13 @@ export default {
       this.option.autoCropWidth = 256;
       this.option.autoCropHeight = 192;
       this.option.fixedNumber = [4, 3];
-    } else {
+    } else if (this.uploadType == 2) {
       this.option.autoCropWidth = 180;
       this.option.autoCropHeight = 180;
+      this.option.fixedNumber = [1, 1];
+    } else if (this.uploadType == 3) {
+      this.option.autoCropWidth = 240;
+      this.option.autoCropHeight = 120;
       this.option.fixedNumber = [1, 1];
     }
   },
