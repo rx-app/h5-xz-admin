@@ -4,9 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0"> -->
-  <meta name="viewport"
-    content="width=device-width,user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.min.js"></script>
   <title>admin</title>
@@ -22,3 +20,8 @@
 </body>
 
 </html>
+<script type="text/javascript">
+  if (screen.width < 750) {
+    alert("请在电脑上打开页面体验更好")
+  }
+</script>

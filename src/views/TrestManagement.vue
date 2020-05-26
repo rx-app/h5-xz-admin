@@ -46,7 +46,7 @@
           <el-table-column prop="category_name" label="分类"></el-table-column>
           <el-table-column prop="update_user_name" label="操作人"></el-table-column>
           <el-table-column prop="update_at" label="时间">
-            <template slot-scope="scope">{{scope.row.create_at | dd}}</template>
+            <template slot-scope="scope">{{scope.row.update_at | dd}}</template>
           </el-table-column>
           <el-table-column fixed="right" label="操作" align="center" width="190">
             <template slot-scope="scope">
@@ -614,8 +614,8 @@ export default {
         res.data.is_recommend = String(res.data.is_recommend);
         res.data.is_rotation = String(res.data.is_rotation);
         this.form = res.data;
-        this.form.origin_price = res.data.origin_price / 100;
-        this.form.present_price = res.data.present_price / 100;
+        this.form.origin_price = res.data.origin_price;
+        this.form.present_price = res.data.present_price;
         this.dialogFormVisible = true;
         this.form.id = type ? this.form.id : "";
         console.log(this.form);
@@ -765,13 +765,14 @@ export default {
       //
       if (!flag) return false;
       this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.form.origin_price = this.form.origin_price * 100;
-          this.form.present_price = this.form.present_price * 100;
+        if (valid) { 
+          let formObj = JSON.parse(JSON.stringify(this.form))
+          formObj.origin_price = formObj.origin_price * 100;
+          formObj.present_price = formObj.present_price * 100;
           this.$http
             .post(
-              `/test/question/${!this.form.id ? "create" : "update"}`,
-              this.form
+              `/test/question/${!formObj.id ? "create" : "update"}`,
+              formObj
             )
             .then(res => {
               if (res.code == 200) {
@@ -932,18 +933,17 @@ export default {
   created() {
     this.fetch();
     this.getCategoryList();
-  },
-  mounted() {
-    // var video = document.getElementById("#myvideo");
-
-    // this.player.attachMediaElement(video);
-    // this.player.load();
-    // if (flv.isSupported()) {
+    // if(flv.isSupported()){
     //   this.player = flv.createPlayer({
-    //     type: "flv",
-    //     url: "rtsp://10.2.145.66:655/EUrl/CLJ52BW"
+    //     type: 'flv',
+    //     url: 'rtsp://10.2.145.66:655/EUrl/CLJ52BW'
     //   });
     // }
+  },
+  mounted() {
+    // var video = document.getElementById('myvideo') 
+    // this.player.attachMediaElement(video)
+    // this.player.load()
   }
 };
 </script>

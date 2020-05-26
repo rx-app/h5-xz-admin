@@ -11,10 +11,16 @@
         <el-radio :label="0">待审核</el-radio>
       </el-radio-group>
       <el-table :data="items" stripe border :header-cell-style="{background:'#eee'}">
-        <el-table-column prop="id" label="ID" width="240"></el-table-column>
-        <el-table-column prop="member_name" label="会员名"></el-table-column>
+        <el-table-column prop="id" label="ID" width="70"></el-table-column>
+        <el-table-column prop="nickname" label="会员名">
+          <template
+            slot-scope="scope"
+          >{{scope.row.nickname?scope.row.nickname:'手机用户'+scope.row.member_name}}</template>
+        </el-table-column>
         <el-table-column prop="content" label="留言内容"></el-table-column>
-        <el-table-column prop="create_at" label="时间"></el-table-column>
+        <el-table-column prop="create_at" label="时间">
+          <template slot-scope="scope">{{scope.row.create_at | dd}}</template>
+        </el-table-column>
         <!-- <el-table-column prop="status" :formatter="parseStatus" label="状态"></el-table-column> -->
         <el-table-column label="状态" prop="status">
           <template slot-scope="scope">
@@ -23,7 +29,7 @@
             <span v-else style="color:red">未通过</span>
           </template>
         </el-table-column>
-        <el-table-column fixed="right"  label="操作" align="center" width="150">
+        <el-table-column fixed="right" label="操作" align="center" width="150">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -52,7 +58,7 @@
           <el-form-item style="text-align:right">
             <el-button type="primary" native-type="submit" class="myBtn" style="width: 100%;">确 定</el-button>
           </el-form-item>
-        </el-form> 
+        </el-form>
       </el-dialog>
       <el-pagination
         background
@@ -77,8 +83,8 @@ export default {
       pageSize: 8,
       total: 0,
       pageIndex: 1,
-      model:{},
-      dialogFormVisible:false
+      model: {},
+      dialogFormVisible: false
     };
   },
   filters: {},
@@ -136,27 +142,30 @@ export default {
         }
       });
     },
-    async save(){
-      let res
-      if (this.model.id) {  
-        res = await this.$http.post(`message/approve/${this.model.id}/${this.model.status}`, {id:this.model.id,status:this.model.status})
+    async save() {
+      let res;
+      if (this.model.id) {
+        res = await this.$http.post(
+          `message/approve/${this.model.id}/${this.model.status}`,
+          { id: this.model.id, status: this.model.status }
+        );
       } else {
-        res = await this.$http.post('message/create', this.model)  //这个页面应该没有
+        res = await this.$http.post("message/create", this.model); //这个页面应该没有
       }
-      if(res.code==200){ 
+      if (res.code == 200) {
         this.$message({
-          type: 'success',
-          message: '提交成功'
-        })
-        this.dialogFormVisible = false
-        this.fetch()
-      }else{
+          type: "success",
+          message: "提交成功"
+        });
+        this.dialogFormVisible = false;
+        this.fetch();
+      } else {
         this.$message({
-          type: 'error',
+          type: "error",
           message: `错误：${res.msg}`
-        })
+        });
       }
-    },
+    }
   },
   created() {
     this.fetch();
