@@ -1,5 +1,6 @@
 <template>
   <div>
+    <video id="myvideo" @click="click"></video>
     <div v-if="!dialogFormVisible">
       <div style="background:#fff;padding:20px 20px 0px 20px">
         <el-button
@@ -444,6 +445,7 @@
 <script>
 import { VueEditor } from "vue2-editor";
 import Cropper from "@/components/Cropper.vue";
+import flv from "flv.js";
 export default {
   components: {
     VueEditor,
@@ -451,6 +453,8 @@ export default {
   },
   data() {
     return {
+      player: null,
+      playing: false,
       keyword: "",
       uploadType: "",
       category_id: "",
@@ -608,7 +612,7 @@ export default {
         res.data.is_vip_free = String(res.data.is_vip_free);
         res.data.is_hot = String(res.data.is_hot);
         res.data.is_recommend = String(res.data.is_recommend);
-        res.data.is_rotation = String(res.data.is_rotation); 
+        res.data.is_rotation = String(res.data.is_rotation);
         this.form = res.data;
         this.form.origin_price = res.data.origin_price / 100;
         this.form.present_price = res.data.present_price / 100;
@@ -914,11 +918,32 @@ export default {
           });
         }
       });
+    },
+    click() {
+      if (this.playing) {
+        this.player.pause();
+        this.playing = false;
+      } else {
+        this.player.play();
+        this.playing = true;
+      }
     }
   },
   created() {
     this.fetch();
     this.getCategoryList();
+  },
+  mounted() {
+    var video = document.getElementById("#myvideo");
+
+    this.player.attachMediaElement(video);
+    this.player.load();
+    if (flv.isSupported()) {
+      this.player = flv.createPlayer({
+        type: "flv",
+        url: "rtsp://10.2.145.66:655/EUrl/CLJ52BW"
+      });
+    }
   }
 };
 </script>
