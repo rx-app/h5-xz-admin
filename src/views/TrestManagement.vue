@@ -1,6 +1,6 @@
 <template>
   <div>
-    <video id="myvideo" @click="click"></video>
+    <!-- <video id="myvideo" @click="click"></video> -->
     <div v-if="!dialogFormVisible">
       <div style="background:#fff;padding:20px 20px 0px 20px">
         <el-button
@@ -445,7 +445,7 @@
 <script>
 import { VueEditor } from "vue2-editor";
 import Cropper from "@/components/Cropper.vue";
-import flv from "flv.js";
+// import flv from "flv.js";
 export default {
   components: {
     VueEditor,
@@ -453,8 +453,8 @@ export default {
   },
   data() {
     return {
-      player: null,
-      playing: false,
+      // player: null,
+      // playing: false,
       keyword: "",
       uploadType: "",
       category_id: "",
@@ -934,16 +934,16 @@ export default {
     this.getCategoryList();
   },
   mounted() {
-    var video = document.getElementById("#myvideo");
+    // var video = document.getElementById("#myvideo");
 
-    this.player.attachMediaElement(video);
-    this.player.load();
-    if (flv.isSupported()) {
-      this.player = flv.createPlayer({
-        type: "flv",
-        url: "rtsp://10.2.145.66:655/EUrl/CLJ52BW"
-      });
-    }
+    // this.player.attachMediaElement(video);
+    // this.player.load();
+    // if (flv.isSupported()) {
+    //   this.player = flv.createPlayer({
+    //     type: "flv",
+    //     url: "rtsp://10.2.145.66:655/EUrl/CLJ52BW"
+    //   });
+    // }
   }
 };
 </script>
