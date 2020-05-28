@@ -186,7 +186,7 @@
     </div>
     <div v-if="dialogFormVisible">
       <div class="about card">
-        <h1 class="card-header">{{this.form.id ? '编辑' : '新建'}}卡牌</h1>
+        <h1 class="card-header">{{this.form.id ? '编辑' : '新建'}}测试题</h1>
         <el-button
           @click="dialogFormVisible = false"
           style="position: absolute; right: 30px; top: 27px;"
