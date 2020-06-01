@@ -33,7 +33,11 @@
       >
         <el-table-column type="index"></el-table-column>
         <el-table-column prop="name" label="平台名称" width="150"></el-table-column>
-        <el-table-column prop="amount" label="总金额" width="150"></el-table-column>
+        <el-table-column prop="amount" label="总金额" width="150">
+          <template slot-scope="scope">
+            <span>{{scope.row.amount/100}}</span> 
+          </template>
+        </el-table-column>
         <el-table-column prop="url" label="地址">
           <template slot-scope="scope">
             <span>{{scope.row.url}}</span>
