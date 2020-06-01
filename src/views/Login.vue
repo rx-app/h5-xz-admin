@@ -90,10 +90,10 @@ export default {
       const res = await this.$http.post("auth/login", {
         username: this.username,
         password: pwd
-      }); 
+      });
       if (res.code == 200) {
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("name", this.username); 
+        localStorage.setItem("name", this.username);
         const res1 = await this.$http.get("auth/info");
         if (res1.code == 200) {
           localStorage.setItem("meunBtn", res1.data.role_set[0]);
@@ -106,11 +106,11 @@ export default {
           } else {
             this.$router.push("/card/create");
           }
-        }
+        } 
       } else {
         this.$message({
           type: "error",
-          message: res.data.msg
+          message: res.msg
         });
       }
       // this.$router.push('/auth/login')

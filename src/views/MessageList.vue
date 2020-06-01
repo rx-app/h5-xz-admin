@@ -127,7 +127,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(async () => {
-        const res = await this.$http.post(`admin/delete?ids=${row.id}`);
+        const res = await this.$http.post(`message/delete?ids=${row.id}`);
         if (res.code == 200) {
           this.$message({
             type: "success",
