@@ -304,7 +304,7 @@
           <div style="border:1px solid #f0f0f0;padding:10px;margin-bottom:20px">
             <div v-for="(item,i) in form.item_list" :key="i">
               <div
-                style="border:1px solid #DCDFE6;margin:10px 0px;padding:10px 5px;border-radius: 4px;"
+                style="border:1px solid #DCDFE6;margin:10px 0px;padding:10px 5px;border-radius: 4px;background: #f6f5f5"
               >
                 <span style="font-weight: bold;">测试题{{i+1}}</span>
 
@@ -359,8 +359,8 @@
           </div>
           <div style="border:1px solid #f0f0f0;padding:10px;margin-bottom:20px">
             <div v-for="(item,i) in form.result_list" :key="i">
-              <div>
-                结果{{i+1}}
+              <div style="border:1px solid #DCDFE6;margin:10px 0px;padding:10px 5px;border-radius: 4px;background: #f6f5f5">
+                <span style="font-weight: bold;">结果{{i+1}}</span>
                 <el-tooltip effect="light" content="删除" placement="bottom">
                   <el-button
                     size="mini"

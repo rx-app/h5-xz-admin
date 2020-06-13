@@ -26,17 +26,17 @@
 .el-container{
   background-color: #f4f7fa;
 }
-.el-menu{
+.el-aside .el-menu{
   background-color: #393836;
   border: 0;
 }
-.el-menu-item-group__title,.el-menu-item{
+.el-aside .el-menu-item-group__title,.el-aside  .el-menu-item{
   color: #fff;
 }
-.el-submenu__title,.el-submenu__title i,.el-menu-item.is-active{
+.el-aside .el-submenu__title,.el-aside  .el-submenu__title i,.el-aside .el-menu-item.is-active{
   color: #fff;
 }
-.el-submenu__title:hover,.el-menu-item.is-active,.el-menu-item:hover{
+.el-aside .el-submenu__title:hover,.el-aside .el-menu-item.is-active,.el-aside .el-menu-item:hover{
   background-color: #278ff0;
 }
 .el-main{

@@ -1,53 +1,83 @@
 <template>
   <div>
-    <div>
-      <el-button type="primary" class="add myBtn" @click="$router.push(`/card/create`)">
-        <i class="el-icon-s-custom"></i> 添加卡牌
-      </el-button>
-    </div>
     <div class="card">
-      <h1 class="card-header">卡牌列表</h1>
-      <el-table :data="items" stripe border :header-cell-style="{background:'#eee'}">
-        <el-table-column prop="id" label="ID" width="240"></el-table-column>
-        <el-table-column prop="title" label="标题"></el-table-column>
-        <el-table-column prop="icon" label="图标">
-          <template slot-scope="scope">
-            <img :src="scope.row.icon" style="height:3rem;" />
-          </template>
-        </el-table-column>
-        <!-- <el-table-column prop="email" label="邮箱"></el-table-column> -->
-        <el-table-column fixed="right"  label="操作" align="center" width="180">
-          <template slot-scope="scope">
-            <el-tooltip effect="light" content="编辑" placement="bottom">
-              <el-button
-                size="mini"
-                type="primary"  plain   icon="el-icon-edit"
-                @click="$router.push(`/card/edit/${scope.row.id}`)"
-              ></el-button>
-            </el-tooltip>
+      <el-row class="aside">
+        <el-col :span="4" style="width220px;">
+          <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
+          <el-menu default-active="1" class="el-menu-vertical-demo">
+            <el-menu-item index="1">
+              <span slot="title">导航一</span>
+              <i class="el-icon-arrow-right" style="float:right;margin-top:20px"></i>
+            </el-menu-item>
+            <el-menu-item index="2">
+              <span slot="title">导航二</span>
+            </el-menu-item>
+            <el-menu-item index="3">
+              <span slot="title">导航三</span>
+            </el-menu-item>
+          </el-menu>
+          <el-button plain style="width:100%;border-style:dashed">
+            <i class="el-icon-circle-plus-outline"></i> 分类管理
+          </el-button>
+        </el-col>
+        <el-col :span="4" style="width220px;">
+          <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
+          <el-menu class="el-menu-vertical-demo">
+            <el-menu-item index="1">
+              <span slot="title">导航一</span>
+            </el-menu-item>
+            <el-menu-item index="2">
+              <span slot="title">导航二</span>
+            </el-menu-item>
+          </el-menu>
+          <el-button plain style="width:100%;border-style:dashed">
+            <i class="el-icon-circle-plus-outline"></i> 分类管理
+          </el-button>
+        </el-col>
+        <el-col :span="16">
+          <el-button
+            type="primary"
+            class="add myBtn"
+            @click="$router.push(`/card/create`)"
+            style="float:right;margin-top:20px;margin-right:20px"
+          >
+            <i class="el-icon-s-custom"></i> 添加卡牌
+          </el-button>
+          <h1 class="card-header">卡牌列表</h1>
+          <el-table :data="items" stripe border :header-cell-style="{background:'#eee'}">
+            <el-table-column prop="id" label="ID" width="80"></el-table-column>
+            <el-table-column prop="title" label="标题"></el-table-column>
+            <el-table-column prop="icon" label="图标">
+              <template slot-scope="scope">
+                <img :src="scope.row.icon" style="height:3rem;" />
+              </template>
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" align="center" width="180">
+              <template slot-scope="scope">
+                <el-tooltip effect="light" content="编辑" placement="bottom">
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    plain
+                    icon="el-icon-edit"
+                    @click="$router.push(`/card/edit/${scope.row.id}`)"
+                  ></el-button>
+                </el-tooltip>
 
-            <el-tooltip effect="light" content="删除" placement="bottom">
-              <el-button size="mini" type="danger"  plain   icon="el-icon-delete" @click="remove(scope.row)"></el-button>
-            </el-tooltip>
-            <!-- <el-button
-              type="text"
-              size="small"
-              @click="$router.push(`/admin_users/edit/${scope.row.id}`)"
-            ><i class="el-icon-edit" title="编辑"></i></el-button>
-            <el-button type="text" size="small" @click="remove(scope.row)"><i class="el-icon-delete" title="删除"></i></el-button>-->
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <!-- <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[3, 6, 9, 12]"
-          :page-size="3"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
-      </el-pagination>-->
+                <el-tooltip effect="light" content="删除" placement="bottom">
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    plain
+                    icon="el-icon-delete"
+                    @click="remove(scope.row)"
+                  ></el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
 
       <el-pagination
         background
@@ -126,4 +156,15 @@ export default {
   }
 };
 </script>
-
+<style>
+.aside .el-menu-item.is-active {
+  border-left: 3px solid #6595f2;
+  background-color: #f5f8fd;
+}
+.aside .el-menu .el-menu-item{
+  border-bottom: 1px solid #e6e6e6;
+}
+.aside .el-menu .el-menu-item:last-child {
+  border-bottom:0px;
+}
+</style>
