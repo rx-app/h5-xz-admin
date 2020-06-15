@@ -2,35 +2,39 @@
   <div>
     <div class="card">
       <el-row class="aside">
-        <el-col :span="4" style="width220px;">
+        <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6">
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
-          <el-menu default-active="1" class="el-menu-vertical-demo">
-            <el-menu-item index="1">
-              <span slot="title">导航一</span>
-              <i class="el-icon-arrow-right" style="float:right;margin-top:20px"></i>
-            </el-menu-item>
-            <el-menu-item index="2">
-              <span slot="title">导航二</span>
-            </el-menu-item>
-            <el-menu-item index="3">
-              <span slot="title">导航三</span>
-            </el-menu-item>
+          <el-menu :default-active="active1" class="el-menu-vertical-demo" @select="handleSelect1">
+            <template v-for="(item,i) in firstList">
+              <el-menu-item :index="item.id+''" :key="i">
+                <span slot="title">{{item.name}}</span>
+                <i class="el-icon-arrow-right" style="float:right;margin-top:20px"></i>
+              </el-menu-item>
+            </template>
           </el-menu>
-          <el-button plain style="width:100%;border-style:dashed">
+          <el-button
+            @click="dialogFormVisible1 = true;form1.name=''"
+            plain
+            style="width:100%;border-style:dashed"
+          >
             <i class="el-icon-circle-plus-outline"></i> 分类管理
           </el-button>
         </el-col>
-        <el-col :span="4" style="width220px;">
+        <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6">
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
-          <el-menu class="el-menu-vertical-demo">
-            <el-menu-item index="1">
-              <span slot="title">导航一</span>
-            </el-menu-item>
-            <el-menu-item index="2">
-              <span slot="title">导航二</span>
-            </el-menu-item>
+          <el-menu :default-active="active2" class="el-menu-vertical-demo" @select="handleSelect2">
+            <template v-for="(item,i) in secondList">
+              <el-menu-item :index="item.id+''" :key="i">
+                <span slot="title">{{item.name}}</span>
+                <i class="el-icon-arrow-right" style="float:right;margin-top:20px"></i>
+              </el-menu-item>
+            </template>
           </el-menu>
-          <el-button plain style="width:100%;border-style:dashed">
+          <el-button
+            @click="dialogFormVisible2 = true;form2.name='';form2.parent_id=active1;"
+            plain
+            style="width:100%;border-style:dashed"
+          >
             <i class="el-icon-circle-plus-outline"></i> 分类管理
           </el-button>
         </el-col>
@@ -38,7 +42,8 @@
           <el-button
             type="primary"
             class="add myBtn"
-            @click="$router.push(`/card/create`)"
+            v-if="active2"
+            @click="$router.push(`/card/create/${active2}`)"
             style="float:right;margin-top:20px;margin-right:20px"
           >
             <i class="el-icon-s-custom"></i> 添加卡牌
@@ -76,20 +81,41 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :page-size="pageSize"
+            @next-click="nextClick"
+            @prev-click="prevClick"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :total="total"
+          ></el-pagination>
         </el-col>
       </el-row>
-
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="pageSize"
-        @next-click="nextClick"
-        @prev-click="prevClick"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :total="total"
-      ></el-pagination>
     </div>
+    <el-dialog title="一级分类" :visible.sync="dialogFormVisible1">
+      <el-form :model="form1">
+        <el-form-item label="分类名称">
+          <el-input v-model="form1.name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible1 = false">取 消</el-button>
+        <el-button type="primary" @click="subm1">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="二级分类" :visible.sync="dialogFormVisible2">
+      <el-form :model="form2">
+        <el-form-item label="分类名称">
+          <el-input v-model="form2.name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible2 = false">取 消</el-button>
+        <el-button type="primary" @click="subm2">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -97,10 +123,19 @@
 export default {
   data() {
     return {
+      dialogFormVisible1: false,
+      dialogFormVisible2: false,
+      form1: { name: "", parent_id: 0, sort: 0, type: 1 },
+      form2: { name: "", parent_id: null, sort: 0, type: 2 },
       items: [],
       pageSize: 8,
       total: 0,
-      pageIndex: 1
+      pageIndex: 1,
+      firstList: [],
+      secondList: [],
+      active1: "",
+      active2: "",
+      category_id: ""
     };
   },
   methods: {
@@ -119,15 +154,83 @@ export default {
       this.pageIndex = val;
       this.fetch();
     },
+    handleSelect1(key, keyPath) {
+      this.active1 = key
+      this.getcategoryItem(key);
+    },
+    handleSelect2(key, keyPath) {
+       this.active2 = key
+      this.fetch();
+    },
+    getcategory() {
+      this.$http
+        .get("card/category/page", {
+          params: { type: 1, parent_id: 0, page_index: 1, page_size: 10000 }
+        })
+        .then(res => {
+          if (res.code == 200) {
+            if (res.data.result) {
+              this.firstList = res.data.result;
+              this.active1 = res.data.result[0].id + "";
+              this.getcategoryItem(res.data.result[0].id);
+            }
+          }
+        });
+    },
+    getcategoryItem(id) {
+      this.$http
+        .get("card/category/page", {
+          params: { type:2, parent_id: id, page_index: 1, page_size: 10000 }
+        })
+        .then(res => {
+          if (res.code == 200) {
+            if (res.data.result) {
+              this.active2 = res.data.result[0].id + "";
+              this.secondList = res.data.result;
+              this.fetch()
+            }else{
+              this.active2 = "";
+              this.secondList = [];
+            }
+          }
+        });
+    },
     async fetch() {
       const res = await this.$http.get("card/page", {
-        params: { page_index: this.pageIndex, page_size: this.pageSize }
+        params: {
+          page_index: this.pageIndex,
+          page_size: this.pageSize,
+          category_id: this.active2
+        }
       });
-      console.log(res.data);
       if (res.code == 200) {
         this.items = res.data.result;
         this.total = res.data.total_count;
       }
+    },
+    subm1() {
+      this.$http.post("card/category/create", this.form1).then(res => {
+        if (res.code == 200) {
+          this.dialogFormVisible1 = false;
+          this.getcategory()
+          this.$message({
+            type: "success",
+            message: "添加成功!"
+          });
+        }
+      });
+    },
+    subm2() {
+      this.$http.post("card/category/create", this.form2).then(res => {
+        if (res.code == 200) {
+          this.dialogFormVisible2 = false;
+          this.getcategoryItem(this.active1);
+          this.$message({
+            type: "success",
+            message: "添加成功!"
+          });
+        }
+      });
     },
     remove(row) {
       this.$confirm(`确定要删除此卡牌吗？`, "提示", {
@@ -152,7 +255,7 @@ export default {
     }
   },
   created() {
-    this.fetch();
+    this.getcategory();
   }
 };
 </script>
@@ -161,10 +264,13 @@ export default {
   border-left: 3px solid #6595f2;
   background-color: #f5f8fd;
 }
-.aside .el-menu .el-menu-item{
+.aside .el-menu .el-menu-item {
   border-bottom: 1px solid #e6e6e6;
 }
 .aside .el-menu .el-menu-item:last-child {
-  border-bottom:0px;
+  border-bottom: 0px;
+}
+.aside .el-menu {
+  border-right: 0px;
 }
 </style>

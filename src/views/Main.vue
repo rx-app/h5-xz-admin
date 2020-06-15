@@ -26,7 +26,7 @@
           </template>
           <el-menu-item-group>
             <!-- <template slot="title">卡牌</template> -->
-            <el-menu-item index="/card/create">新建卡牌</el-menu-item>
+            <!-- <el-menu-item index="/card/create">新建卡牌</el-menu-item> -->
             <el-menu-item index="/card/list">卡牌列表</el-menu-item>
           </el-menu-item-group>
           <el-menu-item-group>

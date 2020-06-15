@@ -111,10 +111,11 @@ export default {
       if (this.model.password) {
         this.model.password = md5(this.model.password);
       }
+      this.model.category_id = this.$route.params.id;
       if (this.id) {
         // debugger
         this.$set(this.model, "user_id", parseInt(this.id)); // this.model.id=this.id
-        console.log(this.model);
+        console.log();
         res = await this.$http.post(`card/update/`, this.model);
       } else {
         res = await this.$http.post("card/create", this.model);

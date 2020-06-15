@@ -104,7 +104,7 @@ export default {
           if (res1.data.role_set[0] == 1) {
             this.$router.push("/admin_users/create");
           } else {
-            this.$router.push("/card/create");
+            this.$router.push("/card/list");
           }
         } 
       } else {

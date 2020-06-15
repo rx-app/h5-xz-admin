@@ -28,7 +28,7 @@ const router = new Router({
       name: 'main',
       component: Main,
       children: [
-        { path: '/Card/create', component: CardEdit },
+        { path: '/Card/create/:id', component: CardEdit },
         { path: '/Card/edit/:id', component: CardEdit, props: true },
         { path: '/Card/list', component: CardList },
 
