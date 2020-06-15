@@ -7,8 +7,21 @@
           <el-menu :default-active="active1" class="el-menu-vertical-demo" @select="handleSelect1">
             <template v-for="(item,i) in firstList">
               <el-menu-item :index="item.id+''" :key="i">
-                <span slot="title">{{item.name}}</span>
-                <i class="el-icon-arrow-right" style="float:right;margin-top:20px"></i>
+                <span
+                  slot="title"
+                  :title="item.name"
+                  style="display:inline-block;width:100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
+                >{{item.name}}</span>
+                <i
+                  class="el-icon-delete"
+                  @click.stop="delDetial1(item)"
+                  style="float:right;margin-top:20px"
+                ></i>
+                <i
+                  class="el-icon-edit"
+                  @click.stop="dialogFormVisible1 = true;form1=JSON.parse(JSON.stringify(item))"
+                  style="float:right;margin-top:20px"
+                ></i>
               </el-menu-item>
             </template>
           </el-menu>
@@ -25,8 +38,22 @@
           <el-menu :default-active="active2" class="el-menu-vertical-demo" @select="handleSelect2">
             <template v-for="(item,i) in secondList">
               <el-menu-item :index="item.id+''" :key="i">
-                <span slot="title">{{item.name}}</span>
-                <i class="el-icon-arrow-right" style="float:right;margin-top:20px"></i>
+                <span
+                  slot="title"
+                  :title="item.name"
+                  style="display:inline-block;width:100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
+                >{{item.name}}</span>
+
+                <i
+                  class="el-icon-delete"
+                  @click.stop="delDetial2(item)"
+                  style="float:right;margin-top:20px"
+                ></i>
+                <i
+                  class="el-icon-edit"
+                  @click.stop="dialogFormVisible1 = true;form1=JSON.parse(JSON.stringify(item))"
+                  style="float:right;margin-top:20px"
+                ></i>
               </el-menu-item>
             </template>
           </el-menu>
@@ -155,12 +182,54 @@ export default {
       this.fetch();
     },
     handleSelect1(key, keyPath) {
-      this.active1 = key
+      this.active1 = key;
       this.getcategoryItem(key);
     },
     handleSelect2(key, keyPath) {
-       this.active2 = key
+      this.active2 = key;
       this.fetch();
+    },
+    delDetial1(item) {
+      this.$confirm(`确定要删除此一级分类吗？`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(async () => {
+        const res = await this.$http.post(`card/category/delete?ids=${item.id}`);
+        if (res.code == 200) {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+          this.getcategory();
+        } else {
+          this.$message({
+            type: "error",
+            message: `错误：${res.msg}`
+          });
+        }
+      });
+    },
+    delDetial2(item) {
+      this.$confirm(`确定要删除此二级分类吗？`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(async () => {
+        const res = await this.$http.post(`card/category/delete?ids=${item.id}`);
+        if (res.code == 200) {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+          this.getcategoryItem(this.active1);
+        } else {
+          this.$message({
+            type: "error",
+            message: `错误：${res.msg}`
+          });
+        }
+      });
     },
     getcategory() {
       this.$http
@@ -178,17 +247,18 @@ export default {
         });
     },
     getcategoryItem(id) {
+      this.items = [];
       this.$http
         .get("card/category/page", {
-          params: { type:2, parent_id: id, page_index: 1, page_size: 10000 }
+          params: { type: 2, parent_id: id, page_index: 1, page_size: 10000 }
         })
         .then(res => {
           if (res.code == 200) {
             if (res.data.result) {
               this.active2 = res.data.result[0].id + "";
               this.secondList = res.data.result;
-              this.fetch()
-            }else{
+              this.fetch();
+            } else {
               this.active2 = "";
               this.secondList = [];
             }
@@ -209,10 +279,10 @@ export default {
       }
     },
     subm1() {
-      this.$http.post("card/category/create", this.form1).then(res => {
+      this.$http.post(`card/category/${!this.form1.id ? "create" : "update"}`, this.form1).then(res => {
         if (res.code == 200) {
           this.dialogFormVisible1 = false;
-          this.getcategory()
+          this.getcategory();
           this.$message({
             type: "success",
             message: "添加成功!"
@@ -221,7 +291,7 @@ export default {
       });
     },
     subm2() {
-      this.$http.post("card/category/create", this.form2).then(res => {
+      this.$http.post(`card/category/${!this.form2.id ? "create" : "update"}`, this.form2).then(res => {
         if (res.code == 200) {
           this.dialogFormVisible2 = false;
           this.getcategoryItem(this.active1);
