@@ -17,7 +17,7 @@
     "stylus-loader": "^3.0.2",
     "videojs-flvjs": "^0.2.0",
     "vue": "^2.6.10",
-    "vue-cropper": "^0.5.2",
+    "vue-cropper": "^0.5.4",
     "vue-router": "^3.0.3",
     "vue2-editor": "^2.6.6"
   },

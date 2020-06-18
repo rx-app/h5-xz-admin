@@ -30,12 +30,14 @@
           </div>
           <div class="operation-box">
             <div class="cropper">
-              <vueCropper
+              <vueCropper 
                 ref="cropper"
                 :img="option.img"
                 :outputSize="option.size"
                 :outputType="option.outputType"
                 :info="option.info"
+                :fixed="fixed"
+                :fixed-number="fixedNumber"
                 :full="option.full"
                 :canMove="option.canMove"
                 :canMoveBox="option.canMoveBox"
@@ -80,12 +82,12 @@ export default {
         original: false, // 上传图片是否显示原始宽高
         canMoveBox: true, // 能否拖动截图框
         autoCrop: true, // 是否默认生成截图框
+        fixedBox:false,
         autoCropWidth: 180,
-        autoCropHeight: 180,
-        // fixed: true,
-        // fixedNumber: [1, 1],
-        fixedBox: true // 截图框固定大小
-      },
+        autoCropHeight: 180
+      }, 
+      fixed: true, //是否开启截图框宽高固定比例
+      fixedNumber: [4, 3], //截图框的宽高比例
       fileName: "", // 本机文件地址
       downImg: "#",
       imgFile: "",
@@ -100,15 +102,15 @@ export default {
       if (this.uploadType == 1) {
         this.option.autoCropWidth = 256;
         this.option.autoCropHeight = 192;
-        this.option.fixedNumber = [4, 3];
+        this.fixedNumber = [4, 3];
       } else if (this.uploadType == 2) {
         this.option.autoCropWidth = 180;
         this.option.autoCropHeight = 180;
-        this.option.fixedNumber = [1, 1];
+        this.fixedNumber = [1, 1];
       } else if (this.uploadType == 3) {
         this.option.autoCropWidth = 240;
         this.option.autoCropHeight = 120;
-        this.option.fixedNumber = [1, 1];
+        this.fixedNumber = [2, 1];
       }
     }
   },
@@ -117,15 +119,15 @@ export default {
     if (this.uploadType == 1) {
       this.option.autoCropWidth = 256;
       this.option.autoCropHeight = 192;
-      this.option.fixedNumber = [4, 3];
+      this.fixedNumber = [4, 3];
     } else if (this.uploadType == 2) {
       this.option.autoCropWidth = 180;
       this.option.autoCropHeight = 180;
-      this.option.fixedNumber = [1, 1];
+      this.fixedNumber = [1, 1];
     } else if (this.uploadType == 3) {
       this.option.autoCropWidth = 240;
       this.option.autoCropHeight = 120;
-      this.option.fixedNumber = [1, 1];
+      this.fixedNumber = [2, 1];
     }
   },
   methods: {
