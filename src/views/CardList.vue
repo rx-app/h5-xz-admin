@@ -5,8 +5,8 @@
         <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6">
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
           <el-menu :default-active="active1" class="el-menu-vertical-demo" @select="handleSelect1">
-            <template v-for="(item,i) in firstList">
-              <el-menu-item :index="item.id+''" :key="i">
+            <template v-for="item in firstList">
+              <el-menu-item :index="item.id+''" :key="item.id">
                 <span
                   slot="title"
                   :title="item.name"
@@ -36,8 +36,8 @@
         <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6">
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
           <el-menu :default-active="active2" class="el-menu-vertical-demo" @select="handleSelect2">
-            <template v-for="(item,i) in secondList">
-              <el-menu-item :index="item.id+''" :key="i">
+            <template v-for="item in secondList">
+              <el-menu-item :index="item.id+''" :key="item.id">
                 <span
                   slot="title"
                   :title="item.name"
@@ -74,6 +74,15 @@
             style="float:right;margin-top:20px;margin-right:20px"
           >
             <i class="el-icon-s-custom"></i> 添加卡牌
+          </el-button>
+          <el-button
+            type="primary"
+            class="add myBtn"
+            @click="dialogFormVisible3 = true;categoryvalue='';categoryvalue2=''"
+            v-if="items.length>0?true:false"
+            style="float:right;margin-top:20px;margin-right:20px"
+          >
+            <i class="el-icon-news"></i> 复制卡牌
           </el-button>
           <h1 class="card-header">卡牌列表</h1>
           <el-table :data="items" stripe border :header-cell-style="{background:'#eee'}">
@@ -143,6 +152,22 @@
         <el-button type="primary" @click="subm2">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="复制卡牌" :visible.sync="dialogFormVisible3">
+      <div style="text-align:center">
+        分类选择：
+        <el-select v-model="categoryvalue" @change="handleItemChange" placeholder="请选择">
+          <el-option v-for="item in options2" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+        <el-select v-model="categoryvalue2" placeholder="请选择">
+          <el-option v-for="item in options3" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </div>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible3 = false">取 消</el-button>
+        <el-button type="primary" @click="copycategory">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -150,6 +175,11 @@
 export default {
   data() {
     return {
+      options2: [],
+      categoryvalue: "",
+      categoryvalue2: "",
+      options3: [],
+      dialogFormVisible3: false,
       dialogFormVisible1: false,
       dialogFormVisible2: false,
       form1: { name: "", parent_id: 0, sort: 0, type: 1 },
@@ -166,6 +196,26 @@ export default {
     };
   },
   methods: {
+    handleItemChange(val) {
+      this.$http
+        .get("card/category/page", {
+          params: {
+            type: 2,
+            parent_id: this.categoryvalue,
+            page_index: 1,
+            page_size: 10000
+          }
+        })
+        .then(res => {
+          if (res.code == 200) {
+            if (res.data.result) {
+              this.options3 = res.data.result;
+            } else {
+              this.options3 = [];
+            }
+          }
+        });
+    },
     nextClick(val) {
       this.pageIndex += 1;
       this.fetch();
@@ -195,7 +245,9 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(async () => {
-        const res = await this.$http.post(`card/category/delete?ids=${item.id}`);
+        const res = await this.$http.post(
+          `card/category/delete?ids=${item.id}`
+        );
         if (res.code == 200) {
           this.$message({
             type: "success",
@@ -216,7 +268,9 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(async () => {
-        const res = await this.$http.post(`card/category/delete?ids=${item.id}`);
+        const res = await this.$http.post(
+          `card/category/delete?ids=${item.id}`
+        );
         if (res.code == 200) {
           this.$message({
             type: "success",
@@ -240,6 +294,11 @@ export default {
           if (res.code == 200) {
             if (res.data.result) {
               this.firstList = res.data.result;
+              this.options2 = res.data.result;
+              this.options2.forEach(item => {
+                item.list = [];
+              });
+              console.log(this.options2);
               this.active1 = res.data.result[0].id + "";
               this.getcategoryItem(res.data.result[0].id);
             }
@@ -255,8 +314,8 @@ export default {
         .then(res => {
           if (res.code == 200) {
             if (res.data.result) {
-              this.active2 = res.data.result[0].id + "";
               this.secondList = res.data.result;
+              this.active2 = res.data.result[0].id + "";
               this.fetch();
             } else {
               this.active2 = "";
@@ -274,33 +333,74 @@ export default {
         }
       });
       if (res.code == 200) {
-        this.items = res.data.result;
-        this.total = res.data.total_count;
+        if (res.data.result) {
+          this.items = res.data.result;
+          this.total = res.data.total_count;
+        } else {
+          this.items = [];
+          this.total = 0;
+        }
+      } else {
+        this.items = [];
+        this.total = 0;
       }
     },
     subm1() {
-      this.$http.post(`card/category/${!this.form1.id ? "create" : "update"}`, this.form1).then(res => {
-        if (res.code == 200) {
-          this.dialogFormVisible1 = false;
-          this.getcategory();
-          this.$message({
-            type: "success",
-            message: "添加成功!"
-          });
-        }
-      });
+      this.$http
+        .post(
+          `card/category/${!this.form1.id ? "create" : "update"}`,
+          this.form1
+        )
+        .then(res => {
+          if (res.code == 200) {
+            this.dialogFormVisible1 = false;
+            this.getcategory();
+            this.$message({
+              type: "success",
+              message: "添加成功!"
+            });
+          }
+        });
     },
     subm2() {
-      this.$http.post(`card/category/${!this.form2.id ? "create" : "update"}`, this.form2).then(res => {
-        if (res.code == 200) {
-          this.dialogFormVisible2 = false;
-          this.getcategoryItem(this.active1);
-          this.$message({
-            type: "success",
-            message: "添加成功!"
-          });
-        }
-      });
+      this.$http
+        .post(
+          `card/category/${!this.form2.id ? "create" : "update"}`,
+          this.form2
+        )
+        .then(res => {
+          if (res.code == 200) {
+            this.dialogFormVisible2 = false;
+            this.getcategoryItem(this.active1);
+            this.$message({
+              type: "success",
+              message: "添加成功!"
+            });
+          }
+        });
+    },
+    copycategory() {
+      if (!this.categoryvalue2) {
+        this.$message({
+          type: "error",
+          message: "请选择二级分类!"
+        });
+        return false;
+      }
+      this.$http
+        .post(`card/copy/list`, {
+          source_category_id: this.active2,
+          target_category_id: this.categoryvalue2
+        })
+        .then(res => {
+          if (res.code == 200) {
+            this.dialogFormVisible3 = false;
+            this.$message({
+              type: "success",
+              message: "添加成功!"
+            });
+          }
+        });
     },
     remove(row) {
       this.$confirm(`确定要删除此卡牌吗？`, "提示", {
