@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <el-row class="aside">
-        <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6">
+        <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6;overflow-y:auto">
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
           <el-menu :default-active="active1" class="el-menu-vertical-demo" @select="handleSelect1">
             <template v-for="item in firstList">
@@ -33,7 +33,7 @@
             <i class="el-icon-circle-plus-outline"></i> 分类管理
           </el-button>
         </el-col>
-        <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6">
+        <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6;overflow-y:auto">
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
           <el-menu :default-active="active2" class="el-menu-vertical-demo" @select="handleSelect2">
             <template v-for="item in secondList">

@@ -1,6 +1,10 @@
 <template>
   <div class="about card">
     <h1 class="card-header">{{id ? '编辑' : '新建'}}卡牌</h1>
+    <el-button
+          @click="$router.push('/card/list')"
+          style="position: absolute; right: 30px; top: 27px;"
+        >返 回</el-button>
     <el-form
       :rules="rules"
       :model="model"
