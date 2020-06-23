@@ -2,7 +2,10 @@
   <div>
     <div class="card">
       <el-row class="aside">
-        <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6;overflow-y:auto">
+        <el-col
+          :span="5"
+          style="width220px;height:705px;border-right:1px solid #e6e6e6;overflow-y:auto"
+        >
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
           <el-menu :default-active="active1" class="el-menu-vertical-demo" @select="handleSelect1">
             <template v-for="item in firstList">
@@ -26,14 +29,17 @@
             </template>
           </el-menu>
           <el-button
-            @click="dialogFormVisible1 = true;form1.name=''"
+            @click="dialogFormVisible1 = true;form1.name='';form.id='';"
             plain
             style="width:100%;border-style:dashed"
           >
             <i class="el-icon-circle-plus-outline"></i> 分类管理
           </el-button>
         </el-col>
-        <el-col :span="4" style="width220px;height:705px;border-right:1px solid #e6e6e6;overflow-y:auto">
+        <el-col
+          :span="5"
+          style="width220px;height:705px;border-right:1px solid #e6e6e6;overflow-y:auto"
+        >
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
           <el-menu :default-active="active2" class="el-menu-vertical-demo" @select="handleSelect2">
             <template v-for="item in secondList">
@@ -51,21 +57,21 @@
                 ></i>
                 <i
                   class="el-icon-edit"
-                  @click.stop="dialogFormVisible1 = true;form1=JSON.parse(JSON.stringify(item))"
+                  @click.stop="dialogFormVisible2 = true;form2=JSON.parse(JSON.stringify(item))"
                   style="float:right;margin-top:20px"
                 ></i>
               </el-menu-item>
             </template>
           </el-menu>
           <el-button
-            @click="dialogFormVisible2 = true;form2.name='';form2.parent_id=active1;"
+            @click="dialogFormVisible2 = true;form2.id='';form2.name='';form2.parent_id=active1;"
             plain
             style="width:100%;border-style:dashed"
           >
             <i class="el-icon-circle-plus-outline"></i> 分类管理
           </el-button>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
           <el-button
             type="primary"
             class="add myBtn"
@@ -77,9 +83,9 @@
           </el-button>
           <el-button
             type="primary"
+            v-if="active2"
             class="add myBtn"
             @click="dialogFormVisible3 = true;categoryvalue='';categoryvalue2=''"
-            v-if="items.length>0?true:false"
             style="float:right;margin-top:20px;margin-right:20px"
           >
             <i class="el-icon-news"></i> 复制卡牌
@@ -233,6 +239,7 @@ export default {
     },
     handleSelect1(key, keyPath) {
       this.active1 = key;
+      this.active2 = "";
       this.getcategoryItem(key);
     },
     handleSelect2(key, keyPath) {
@@ -298,9 +305,10 @@ export default {
               this.options2.forEach(item => {
                 item.list = [];
               });
-              console.log(this.options2);
-              this.active1 = res.data.result[0].id + "";
-              this.getcategoryItem(res.data.result[0].id);
+              if (!this.active1) {
+                this.active1 = res.data.result[0].id + "";
+              }
+              this.getcategoryItem(this.active1);
             }
           }
         });
@@ -315,7 +323,9 @@ export default {
           if (res.code == 200) {
             if (res.data.result) {
               this.secondList = res.data.result;
-              this.active2 = res.data.result[0].id + "";
+              if (!this.active2) {
+                this.active2 = res.data.result[0].id + "";
+              }
               this.fetch();
             } else {
               this.active2 = "";
@@ -354,7 +364,22 @@ export default {
         .then(res => {
           if (res.code == 200) {
             this.dialogFormVisible1 = false;
-            this.getcategory();
+            this.$http
+              .get("card/category/page", {
+                params: {
+                  type: 1,
+                  parent_id: 0,
+                  page_index: 1,
+                  page_size: 10000
+                }
+              })
+              .then(res => {
+                if (res.code == 200) {
+                  if (res.data.result) {
+                    this.firstList = res.data.result;
+                  }
+                }
+              });
             this.$message({
               type: "success",
               message: "添加成功!"
@@ -362,7 +387,7 @@ export default {
           }
         });
     },
-    subm2() {
+    subm2() { 
       this.$http
         .post(
           `card/category/${!this.form2.id ? "create" : "update"}`,
@@ -371,7 +396,22 @@ export default {
         .then(res => {
           if (res.code == 200) {
             this.dialogFormVisible2 = false;
-            this.getcategoryItem(this.active1);
+            this.$http
+              .get("card/category/page", {
+                params: {
+                  type: 2,
+                  parent_id: this.active1,
+                  page_index: 1,
+                  page_size: 10000
+                }
+              })
+              .then(res => {
+                if (res.code == 200) {
+                  if (res.data.result) {
+                    this.secondList = res.data.result;
+                  }
+                }
+              });
             this.$message({
               type: "success",
               message: "添加成功!"
@@ -389,8 +429,8 @@ export default {
       }
       this.$http
         .post(`card/copy/list`, {
-          source_category_id: this.active2,
-          target_category_id: this.categoryvalue2
+          source_category_id: this.categoryvalue2,
+          target_category_id: this.active2
         })
         .then(res => {
           if (res.code == 200) {
@@ -399,6 +439,7 @@ export default {
               type: "success",
               message: "添加成功!"
             });
+            this.fetch();
           }
         });
     },
