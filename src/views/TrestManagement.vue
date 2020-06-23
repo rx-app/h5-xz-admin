@@ -97,7 +97,7 @@
           :total="total"
         ></el-pagination>
         <!-- 分类管理 -->
-        <el-dialog title="分类管理" :visible.sync="dialogcategoryVisible" :close-on-click-modal="false">
+        <el-dialog     title="分类管理" :visible.sync="dialogcategoryVisible" :close-on-click-modal="false">
           <el-table :data="categoryData">
             <el-table-column label="名称" property="name">
               <template slot-scope="scope">
@@ -191,7 +191,7 @@
           @click="dialogFormVisible = false"
           style="position: absolute; right: 30px; top: 27px;"
         >返 回</el-button>
-        <el-dialog width="60%" title="封面上传" :visible.sync="innerVisible" append-to-body>
+        <el-dialog  :close-on-click-modal="false"   width="60%" title="封面上传" :visible.sync="innerVisible" append-to-body>
           <Cropper @upload="getUploadUrl" :uploadType="uploadType"></Cropper>
         </el-dialog>
         <el-form :model="form" :rules="rules" :inline="true" ref="ruleForm" style="padding:30px">

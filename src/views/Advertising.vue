@@ -81,7 +81,7 @@
       ></el-pagination>
 
       <!-- 广告位设置 -->
-      <el-dialog title="广告位设置" width="40%" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+      <el-dialog     title="广告位设置" width="40%" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-form
           :model="ruleForm"
           :rules="rules"

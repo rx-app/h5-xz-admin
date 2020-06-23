@@ -75,7 +75,7 @@
       </el-table>
 
       <!-- 分类管理 -->
-      <el-dialog title="平台添加" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+      <el-dialog    title="平台添加" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-form
           :model="ruleForm"
           :rules="rules"

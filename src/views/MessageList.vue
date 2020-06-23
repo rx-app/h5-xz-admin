@@ -41,7 +41,7 @@
         </el-table-column>
       </el-table>
       <!-- 审核 -->
-      <el-dialog title="审核留言" :visible.sync="dialogFormVisible">
+      <el-dialog  :close-on-click-modal="false"   title="审核留言" :visible.sync="dialogFormVisible">
         <el-form style="max-width:600px" label-width="120px" @submit.native.prevent="save">
           <el-form-item label="会员名">
             <el-input readonly="true" v-model="model.member_name"></el-input>
