@@ -1,13 +1,18 @@
 <template>
-  <div>
-    <div class="card">
-      <el-row class="aside">
+  <div style="height:100%">
+    <div class="card" style="height:100%;margin-bottom:0px">
+      <el-row class="aside" style="height:100%">
         <el-col
           :span="5"
-          style="width220px;height:600px;border-right:1px solid #e6e6e6;overflow-y:auto"
+          style="width220px;height:100%;border-right:1px solid #e6e6e6;padding-bottom:50px;position: relative;"
         >
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
-          <el-menu :default-active="active1" class="el-menu-vertical-demo" @select="handleSelect1">
+          <el-menu
+            :default-active="active1"
+            class="el-menu-vertical-demo"
+            @select="handleSelect1"
+            style=" height: 100%;overflow: auto;"
+          >
             <template v-for="item in firstList">
               <el-menu-item :index="item.id+''" :key="item.id">
                 <span
@@ -31,17 +36,22 @@
           <el-button
             @click="dialogFormVisible1 = true;form1.name='';form.id='';"
             plain
-            style="width:100%;border-style:dashed"
+            style="width:100%;border-style:dashed;position: absolute;bottom: 0px;"
           >
             <i class="el-icon-circle-plus-outline"></i> 分类管理
           </el-button>
         </el-col>
         <el-col
           :span="5"
-          style="width220px;height:600px;border-right:1px solid #e6e6e6;overflow-y:auto"
+          style="width220px;height:100%;border-right:1px solid #e6e6e6;padding-bottom:50px;position: relative;"
         >
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
-          <el-menu :default-active="active2" class="el-menu-vertical-demo" @select="handleSelect2">
+          <el-menu
+            :default-active="active2"
+            class="el-menu-vertical-demo"
+            @select="handleSelect2"
+            style=" height: 100%;overflow: auto;"
+          >
             <template v-for="item in secondList">
               <el-menu-item :index="item.id+''" :key="item.id">
                 <span
@@ -66,7 +76,7 @@
           <el-button
             @click="dialogFormVisible2 = true;form2.id='';form2.name='';form2.parent_id=active1;"
             plain
-            style="width:100%;border-style:dashed"
+            style="width:100%;border-style:dashed;position: absolute;bottom: 0px;"
           >
             <i class="el-icon-circle-plus-outline"></i> 分类管理
           </el-button>
@@ -136,8 +146,8 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog  :close-on-click-modal="false"   title="一级分类" :visible.sync="dialogFormVisible1">
-      <el-form :model="form1">
+    <el-dialog :close-on-click-modal="false" title="一级分类" :visible.sync="dialogFormVisible1">
+      <el-form :model="form1" @submit.native.prevent="subm1">
         <el-form-item label="分类名称">
           <el-input v-model="form1.name" auto-complete="off"></el-input>
         </el-form-item>
@@ -147,8 +157,8 @@
         <el-button type="primary" @click="subm1">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog  :close-on-click-modal="false"   title="二级分类" :visible.sync="dialogFormVisible2">
-      <el-form :model="form2">
+    <el-dialog :close-on-click-modal="false" title="二级分类" :visible.sync="dialogFormVisible2">
+      <el-form :model="form2" @submit.native.prevent="subm2">
         <el-form-item label="分类名称">
           <el-input v-model="form2.name" auto-complete="off"></el-input>
         </el-form-item>
@@ -158,7 +168,7 @@
         <el-button type="primary" @click="subm2">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog  :close-on-click-modal="false"   title="复制卡牌" :visible.sync="dialogFormVisible3">
+    <el-dialog :close-on-click-modal="false" title="复制卡牌" :visible.sync="dialogFormVisible3">
       <div style="text-align:center">
         分类选择：
         <el-select v-model="categoryvalue" @change="handleItemChange" placeholder="请选择">
@@ -191,7 +201,7 @@ export default {
       form1: { name: "", parent_id: 0, sort: 0, type: 1 },
       form2: { name: "", parent_id: null, sort: 0, type: 2 },
       items: [],
-      pageSize:5,
+      pageSize: 5,
       total: 0,
       pageIndex: 1,
       firstList: [],
@@ -387,7 +397,7 @@ export default {
           }
         });
     },
-    subm2() { 
+    subm2() {
       this.$http
         .post(
           `card/category/${!this.form2.id ? "create" : "update"}`,
