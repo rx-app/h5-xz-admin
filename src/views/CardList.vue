@@ -42,7 +42,7 @@
           </el-button>
         </el-col>
         <el-col
-          :span="5"
+          :span="6"
           style="width220px;height:100%;border-right:1px solid #e6e6e6;padding-bottom:50px;position: relative;"
         >
           <!-- <h1 class="card-header" style="height:45px;margin:0px"></h1> -->
@@ -57,8 +57,13 @@
                 <span
                   slot="title"
                   :title="item.name"
-                  style="display:inline-block;width:100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
+                  style="display:inline-block;width:120px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
                 >{{item.name}}</span>
+                <span
+                  slot="title"
+                  :title="item.name"
+                  style="display:inline-block;width:60px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
+                >¥{{item.present_price}}元</span>
 
                 <i
                   class="el-icon-delete"
@@ -67,21 +72,21 @@
                 ></i>
                 <i
                   class="el-icon-edit"
-                  @click.stop="dialogFormVisible2 = true;form2=JSON.parse(JSON.stringify(item))"
+                  @click.stop="dialogFormVisible2 = true;item.is_vip_free = String(item.is_vip_free);form2=JSON.parse(JSON.stringify(item))"
                   style="float:right;margin-top:20px"
                 ></i>
               </el-menu-item>
             </template>
           </el-menu>
           <el-button
-            @click="dialogFormVisible2 = true;form2.id='';form2.name='';form2.parent_id=active1;"
+            @click="dialogFormVisible2 = true;form2.id='';form2.name='';form2.is_vip_free='0';form2.present_price=0;form2.origin_price=0;form2.parent_id=active1;"
             plain
             style="width:100%;border-style:dashed;position: absolute;bottom: 0px;"
           >
             <i class="el-icon-circle-plus-outline"></i> 分类管理
           </el-button>
         </el-col>
-        <el-col :span="14">
+        <el-col :span="13">
           <el-button
             type="primary"
             class="add myBtn"
@@ -158,9 +163,33 @@
       </div>
     </el-dialog>
     <el-dialog :close-on-click-modal="false" title="二级分类" :visible.sync="dialogFormVisible2">
-      <el-form :model="form2" @submit.native.prevent="subm2">
+      <el-form :model="form2" @submit.native.prevent="subm2" label-width="100px">
         <el-form-item label="分类名称">
-          <el-input v-model="form2.name" auto-complete="off"></el-input>
+          <el-input v-model="form2.name" auto-complete="off" style=";width:calc(100% - 80px)"></el-input>
+        </el-form-item>
+        <el-form-item label="会员是否免费" prop="is_vip_free">
+          <el-radio-group v-model="form2.is_vip_free">
+            <el-radio label="0">免费</el-radio>
+            <el-radio label="1">付费</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="原价" prop="origin_price">
+          <el-input-number
+            style="width:240px"
+            v-model="form2.origin_price"
+            :precision="2"
+            :min="0"
+            placeholder="请输入原价"
+          ></el-input-number>元
+        </el-form-item>
+        <el-form-item label="现价" prop="present_price">
+          <el-input-number
+            style="width:240px"
+            v-model="form2.present_price"
+            :precision="2"
+            :min="0"
+            placeholder="请输入现价"
+          ></el-input-number>元
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -199,7 +228,15 @@ export default {
       dialogFormVisible1: false,
       dialogFormVisible2: false,
       form1: { name: "", parent_id: 0, sort: 0, type: 1 },
-      form2: { name: "", parent_id: null, sort: 0, type: 2 },
+      form2: {
+        name: "",
+        parent_id: null,
+        sort: 0,
+        type: 2,
+        is_vip_free: "0",
+        origin_price: 0,
+        present_price: 0
+      },
       items: [],
       pageSize: 5,
       total: 0,
@@ -366,68 +403,85 @@ export default {
       }
     },
     subm1() {
-      this.$http
-        .post(
-          `card/category/${!this.form1.id ? "create" : "update"}`,
-          this.form1
-        )
-        .then(res => {
-          if (res.code == 200) {
-            this.dialogFormVisible1 = false;
-            this.$http
-              .get("card/category/page", {
-                params: {
-                  type: 1,
-                  parent_id: 0,
-                  page_index: 1,
-                  page_size: 10000
-                }
-              })
-              .then(res => {
-                if (res.code == 200) {
-                  if (res.data.result) {
-                    this.firstList = res.data.result;
+      if (this.form1.name) {
+        this.$http
+          .post(
+            `card/category/${!this.form1.id ? "create" : "update"}`,
+            this.form1
+          )
+          .then(res => {
+            if (res.code == 200) {
+              this.dialogFormVisible1 = false;
+              this.$http
+                .get("card/category/page", {
+                  params: {
+                    type: 1,
+                    parent_id: 0,
+                    page_index: 1,
+                    page_size: 10000
                   }
-                }
+                })
+                .then(res => {
+                  if (res.code == 200) {
+                    if (res.data.result) {
+                      this.firstList = res.data.result;
+                    }
+                  }
+                });
+              this.$message({
+                type: "success",
+                message: "添加成功!"
               });
-            this.$message({
-              type: "success",
-              message: "添加成功!"
-            });
-          }
+            }
+          });
+      } else {
+        this.$message({
+          type: "error",
+          message: "名称不能为空!"
         });
+      }
     },
     subm2() {
-      this.$http
-        .post(
-          `card/category/${!this.form2.id ? "create" : "update"}`,
-          this.form2
-        )
-        .then(res => {
-          if (res.code == 200) {
-            this.dialogFormVisible2 = false;
-            this.$http
-              .get("card/category/page", {
-                params: {
-                  type: 2,
-                  parent_id: this.active1,
-                  page_index: 1,
-                  page_size: 10000
-                }
-              })
-              .then(res => {
-                if (res.code == 200) {
-                  if (res.data.result) {
-                    this.secondList = res.data.result;
+      if (this.form2.name) {
+        // let formObj = JSON.parse(JSON.stringify(this.form2));
+        // formObj.origin_price = formObj.origin_price * 100;
+        // formObj.present_price = formObj.present_price * 100;
+        this.$http
+          .post(
+            `card/category/${!this.form2.id ? "create" : "update"}`,
+            this.form2
+          )
+          .then(res => {
+            if (res.code == 200) {
+              this.dialogFormVisible2 = false;
+              this.$http
+                .get("card/category/page", {
+                  params: {
+                    type: 2,
+                    parent_id: this.active1,
+                    page_index: 1,
+                    page_size: 10000
                   }
-                }
+                })
+                .then(res => {
+                  if (res.code == 200) {
+                    if (res.data.result) {
+                      this.secondList = res.data.result;
+                    }
+                  }
+                });
+              this.$message({
+                type: "success",
+                message: "添加成功!"
               });
-            this.$message({
-              type: "success",
-              message: "添加成功!"
-            });
-          }
+            }
+          });
+      } else {
+        this.$message({
+          type: "error",
+          message: "名称不能为空!"
         });
+      }
     },
     copycategory() {
       if (!this.categoryvalue2) {
