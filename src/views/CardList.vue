@@ -63,7 +63,7 @@
                   slot="title"
                   :title="item.name"
                   style="display:inline-block;width:60px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
-                >¥{{item.present_price}}元</span>
+                >{{item.present_price}}元</span>
 
                 <i
                   class="el-icon-delete"
