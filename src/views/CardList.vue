@@ -443,13 +443,13 @@ export default {
     },
     subm2() {
       if (this.form2.name) {
-        // let formObj = JSON.parse(JSON.stringify(this.form2));
-        // formObj.origin_price = formObj.origin_price * 100;
-        // formObj.present_price = formObj.present_price * 100;
+        let formObj = JSON.parse(JSON.stringify(this.form2));
+        formObj.origin_price = formObj.origin_price * 100;
+        formObj.present_price = formObj.present_price * 100;
         this.$http
           .post(
             `card/category/${!this.form2.id ? "create" : "update"}`,
-            this.form2
+              formObj
           )
           .then(res => {
             if (res.code == 200) {
